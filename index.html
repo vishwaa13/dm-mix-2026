@@ -2728,6 +2728,8 @@ th {
 }
 
   </style>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
 </head>
 <body>
   <div id="splashScreen" class="splash-screen">
@@ -3055,7 +3057,23 @@ th {
 
     const VALID_PIN = "DM2026";
     const ADMIN_PASSWORD = "admin2026";
-    const STORAGE_KEY = "dm_mix_submissions";
+
+    // ── FIREBASE CONFIG ─────────────────────────────────────
+    // Paste your Firebase project config below.
+    // Get it from: Firebase Console → Project Settings → Your apps → Config
+    const firebaseConfig = {
+      apiKey: "PASTE_YOUR_API_KEY",
+      authDomain: "PASTE_YOUR_PROJECT.firebaseapp.com",
+      databaseURL: "https://PASTE_YOUR_PROJECT-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "PASTE_YOUR_PROJECT",
+      storageBucket: "PASTE_YOUR_PROJECT.firebasestorage.app",
+      messagingSenderId: "PASTE_YOUR_SENDER_ID",
+      appId: "PASTE_YOUR_APP_ID"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    // ─────────────────────────────────────────────────────────
 
     const teams = [
       { name: "DTU 1", seed: 1, pool: "A", logo: "DTU.jpg" },
@@ -3088,21 +3106,17 @@ th {
     ];
 
     // ------------------------------------------------------------
-    // LOCAL STORAGE BACKEND
+    // FIREBASE REALTIME DATABASE BACKEND
     // ------------------------------------------------------------
 
+    let cachedSubmissions = [];
+
     function getSubmissions() {
-      try {
-        return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-      } catch (e) {
-        return [];
-      }
+      return cachedSubmissions;
     }
 
     function saveSubmission(submission) {
-      const subs = getSubmissions();
-      subs.push(submission);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(subs));
+      return db.ref("submissions").push(submission);
     }
 
     // ------------------------------------------------------------
@@ -3564,7 +3578,7 @@ th {
       text.textContent = `You are reporting as ${reportingTeam}. Spirit will be given to ${receiver}.`;
     }
 
-    document.getElementById("scoreForm")?.addEventListener("submit", function(event) {
+    document.getElementById("scoreForm")?.addEventListener("submit", async function(event) {
       event.preventDefault();
 
       const gameId = document.getElementById("gameSelect").value;
@@ -3662,15 +3676,18 @@ th {
         comment: comment
       };
 
-      saveSubmission(submission);
+      try {
+        await saveSubmission(submission);
 
-      this.reset();
-      updateSpiritTotal();
-      renderAll();
-      updateAdminAccessView();
+        this.reset();
+        updateSpiritTotal();
 
-      message.className = "success";
-      message.textContent = "Score submitted! Schedule and standings are now updated.";
+        message.className = "success";
+        message.textContent = "Score submitted! Schedule and standings are now updated.";
+      } catch (error) {
+        message.className = "error";
+        message.textContent = "Submission failed. Please try again or contact the organizer.";
+      }
     });
 
     // ------------------------------------------------------------
@@ -3759,9 +3776,7 @@ th {
 
     function resetResults() {
       if (confirm("Are you sure? This will delete all submitted results.")) {
-        localStorage.removeItem(STORAGE_KEY);
-        renderAll();
-        updateAdminAccessView();
+        db.ref("submissions").remove();
       }
     }
 
@@ -3800,6 +3815,17 @@ th {
     updateAdminAccessView();
     updateSpiritTotal();
     updateSpiritReceiverText();
+
+    db.ref("submissions").on("value", function(snapshot) {
+      cachedSubmissions = [];
+      if (snapshot.exists()) {
+        snapshot.forEach(function(child) {
+          cachedSubmissions.push(child.val());
+        });
+      }
+      renderAll();
+      updateAdminAccessView();
+    });
 
     window.addEventListener("load", function() {
       const splash = document.getElementById("splashScreen");
