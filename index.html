@@ -1,0 +1,3872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Danish Nationals Ultimate Frisbee</title>
+  <style>
+    :root {
+      --dtu-red: #990000;
+      --dtu-dark-red: #660000;
+      --black: #111111;
+      --white: #ffffff;
+      --light-bg: #f7f7f7;
+      --card-bg: rgba(255, 255, 255, 0.94);
+      --text: #1f1f1f;
+      --muted: #666666;
+      --border: #dddddd;
+      --success: #027a48;
+      --warning: #b54708;
+      --danger: #b42318;
+      --soft-red: #fce8e8;
+      --shadow: 0 12px 30px rgba(0, 0, 0, 0.09);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at 12% 18%, rgba(153, 0, 0, 0.18) 0, rgba(153, 0, 0, 0.18) 90px, transparent 92px),
+        radial-gradient(circle at 88% 12%, rgba(17, 17, 17, 0.08) 0, rgba(17, 17, 17, 0.08) 120px, transparent 122px),
+        linear-gradient(135deg, #ffffff 0%, #f5f5f5 45%, #eeeeee 100%);
+      background-attachment: fixed;
+      color: var(--text);
+    }
+
+    header {
+      position: relative;
+      overflow: hidden;
+      min-height: 430px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 70px 20px;
+      text-align: center;
+      color: var(--white);
+      background: linear-gradient(135deg, rgba(153, 0, 0, 0.94), rgba(40, 0, 0, 0.94));
+    }
+
+    .hero-video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background:
+        linear-gradient(135deg, rgba(153, 0, 0, 0.55), rgba(25, 0, 0, 0.45)),
+        radial-gradient(circle at center, rgba(255,255,255,0.08), transparent 45%);
+    }
+
+    header::before {
+      content: "";
+      position: absolute;
+      width: 280px;
+      height: 280px;
+      border: 20px solid rgba(255, 255, 255, 0.14);
+      border-radius: 50%;
+      right: -80px;
+      top: -80px;
+      z-index: 2;
+    }
+
+    header::after {
+      content: "";
+      position: absolute;
+      top: 30px;
+      right: 28px;
+      width: 220px;
+      height: 140px;
+      background-image: url("dfsu2.png");
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      opacity: 0.80;
+      z-index: 3;
+    }
+
+    .hero-content {
+      position: relative;
+      max-width: 900px;
+      z-index: 2;
+    }
+
+    .event-label {
+      display: inline-block;
+      padding: 8px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      background: rgba(255, 255, 255, 0.12);
+      margin-bottom: 18px;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: clamp(2.4rem, 6vw, 5rem);
+      line-height: 0.95;
+      letter-spacing: -0.06em;
+    }
+
+    header p {
+      max-width: 720px;
+      margin: 22px auto 0;
+      font-size: 1.18rem;
+      line-height: 1.6;
+      opacity: 0.96;
+    }
+
+    .hero-actions {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 28px;
+      flex-wrap: wrap;
+    }
+
+    .hero-button {
+      border: none;
+      border-radius: 999px;
+      padding: 13px 18px;
+      font-weight: 900;
+      font-size: 0.98rem;
+      cursor: pointer;
+      background: var(--white);
+      color: var(--dtu-red);
+      text-decoration: none;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+    }
+
+    .hero-button.secondary {
+      background: rgba(255, 255, 255, 0.14);
+      color: var(--white);
+      border: 1px solid rgba(255, 255, 255, 0.45);
+    }
+
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      padding: 12px;
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    nav button {
+      border: 1px solid var(--border);
+      background: var(--white);
+      color: var(--text);
+      padding: 10px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 800;
+      transition: 0.2s ease;
+    }
+
+    nav button.active,
+    nav button:hover {
+      background: var(--dtu-red);
+      color: var(--white);
+      border-color: var(--dtu-red);
+      box-shadow: 0 4px 12px rgba(153, 0, 0, 0.24);
+    }
+
+    main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px 16px 70px;
+    }
+
+    section {
+      display: none;
+      animation: fadeIn 0.25s ease;
+    }
+
+    section.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 18px;
+    }
+
+    .front-layout {
+      display: grid;
+      grid-template-columns: minmax(260px, 0.95fr) minmax(320px, 1.05fr);
+      gap: 22px;
+      align-items: stretch;
+      margin-bottom: 18px;
+    }
+
+    .info-list {
+      display: grid;
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .info-box {
+      padding: 15px 16px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.82);
+      border-left: 5px solid var(--dtu-red);
+    }
+
+    .info-box span {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .info-box strong {
+      font-size: 1.05rem;
+      line-height: 1.35;
+    }
+
+    .weather-card {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(153, 0, 0, 0.12) !important;
+      color: var(--text) !important;
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(252, 232, 232, 0.68)) !important;
+      box-shadow: 0 12px 30px rgba(16, 24, 40, 0.08);
+      padding: 22px;
+    }
+
+    .weather-card::after {
+      content: "";
+      display: block;
+      position: absolute;
+      width: 170px;
+      height: 170px;
+      right: -58px;
+      top: -62px;
+      border: 14px solid rgba(153, 0, 0, 0.07);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .weather-card h2,
+    .weather-card p,
+    .weather-card span,
+    .weather-card strong {
+      position: relative;
+      z-index: 1;
+      color: var(--text) !important;
+    }
+
+    .weather-top {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .weather-location {
+      margin: 0;
+      font-size: 1.35rem;
+      font-weight: 950;
+      letter-spacing: -0.03em;
+      color: var(--dtu-red) !important;
+    }
+
+    .weather-subtitle {
+      margin: 3px 0 14px;
+      color: var(--muted) !important;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    .weather-temp {
+      margin: 0;
+      font-size: clamp(2.6rem, 5vw, 4rem);
+      line-height: 1;
+      font-weight: 950;
+      letter-spacing: -0.08em;
+      color: var(--dtu-red) !important;
+    }
+
+    .weather-big-icon {
+      width: 76px;
+      height: 76px;
+      border-radius: 50%;
+      position: relative;
+      background: radial-gradient(circle at 35% 30%, #fff6c7 0 12%, #ffd56b 34%, #f5ac2c 72%, #c77700 100%);
+      box-shadow: 0 0 28px rgba(255, 196, 75, 0.26);
+    }
+
+    .weather-big-icon::before,
+    .weather-big-icon::after {
+      content: "";
+      position: absolute;
+      inset: -14px;
+      background:
+        linear-gradient(#ffd56b, #ffd56b) center top / 4px 11px no-repeat,
+        linear-gradient(#ffd56b, #ffd56b) center bottom / 4px 11px no-repeat,
+        linear-gradient(90deg, #ffd56b, #ffd56b) left center / 11px 4px no-repeat,
+        linear-gradient(90deg, #ffd56b, #ffd56b) right center / 11px 4px no-repeat;
+      border-radius: 50%;
+      opacity: 0.85;
+    }
+
+    .weather-big-icon::after {
+      transform: rotate(45deg);
+    }
+
+    .forecast-panel,
+    .conditions-panel {
+      position: relative;
+      z-index: 1;
+      background: rgba(255,255,255,0.72);
+      border: 1px solid rgba(153,0,0,0.10);
+      border-radius: 16px;
+      padding: 13px;
+      margin-top: 14px;
+      backdrop-filter: blur(8px);
+    }
+
+    .panel-title {
+      margin: 0 0 10px;
+      color: var(--dtu-red) !important;
+      font-size: 0.68rem;
+      font-weight: 950;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .forecast-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+
+    .forecast-hour {
+      text-align: center;
+      padding: 3px 6px;
+      border-right: 1px solid rgba(153,0,0,0.10);
+    }
+
+    .forecast-hour:nth-child(n+5) {
+      display: none;
+    }
+
+    .forecast-hour:last-child,
+    .forecast-hour:nth-child(4) {
+      border-right: none;
+    }
+
+    .forecast-time {
+      display: block;
+      color: var(--muted) !important;
+      font-size: 0.66rem;
+      font-weight: 800;
+      margin-bottom: 7px;
+    }
+
+    .forecast-icon {
+      display: block;
+      font-size: 1.18rem;
+      margin-bottom: 5px;
+    }
+
+    .forecast-temp {
+      display: block;
+      font-size: 0.88rem;
+      font-weight: 950;
+      color: var(--dtu-red) !important;
+    }
+
+    .conditions-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 11px;
+    }
+
+    .condition-item {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 8px;
+      align-items: start;
+    }
+
+    .condition-icon {
+      opacity: 0.82;
+      font-size: 0.95rem;
+      margin-top: 2px;
+    }
+
+    .condition-label {
+      display: block;
+      color: var(--muted) !important;
+      font-size: 0.72rem;
+      font-weight: 800;
+      margin-bottom: 2px;
+    }
+
+    .condition-value {
+      display: block;
+      font-size: 1rem;
+      font-weight: 950;
+      letter-spacing: -0.03em;
+      color: var(--text) !important;
+    }
+
+    @media (max-width: 720px) {
+      .forecast-row {
+        grid-template-columns: repeat(2, 1fr);
+        row-gap: 12px;
+      }
+
+      .forecast-hour:nth-child(2) {
+        border-right: none;
+      }
+
+      .conditions-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .weather-big-icon {
+        width: 64px;
+        height: 64px;
+      }
+    }
+
+    @media (max-width: 860px) {
+      .front-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .info-layout {
+      display: grid;
+      grid-template-columns: minmax(260px, 0.9fr) minmax(300px, 1.1fr);
+      gap: 22px;
+      align-items: start;
+    }
+
+    .vertical-info {
+      display: grid;
+      gap: 14px;
+    }
+
+    .info-item {
+      padding: 15px 16px;
+      border-left: 5px solid var(--dtu-red);
+      background: rgba(255,255,255,0.78);
+      border-radius: 14px;
+    }
+
+    .info-item span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 5px;
+    }
+
+    .info-item strong {
+      font-size: 1.05rem;
+    }
+
+    .weather-card {
+      background: linear-gradient(135deg, rgba(153,0,0,0.95), rgba(40,0,0,0.92));
+      color: white;
+      border: none;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .weather-card::after {
+      content: "";
+      position: absolute;
+      width: 180px;
+      height: 180px;
+      border: 14px solid rgba(255,255,255,0.10);
+      border-radius: 50%;
+      right: -50px;
+      top: -55px;
+    }
+
+    .weather-main {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .weather-temp {
+      font-size: clamp(2.5rem, 6vw, 4.8rem);
+      line-height: 1;
+      font-weight: 950;
+      letter-spacing: -0.08em;
+      margin: 0;
+    }
+
+    .weather-condition {
+      margin: 6px 0 0;
+      opacity: 0.9;
+      font-weight: 800;
+    }
+
+    .wind-compass {
+      width: 92px;
+      height: 92px;
+      border: 2px solid rgba(255,255,255,0.45);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      position: relative;
+      background: rgba(255,255,255,0.10);
+    }
+
+    .wind-arrow {
+      width: 4px;
+      height: 38px;
+      background: white;
+      border-radius: 999px;
+      transform-origin: center 32px;
+      position: relative;
+    }
+
+    .wind-arrow::before {
+      content: "";
+      position: absolute;
+      top: -7px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-left: 7px solid transparent;
+      border-right: 7px solid transparent;
+      border-bottom: 11px solid white;
+    }
+
+    .weather-details {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .weather-detail {
+      padding: 12px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.12);
+    }
+
+    .weather-detail span {
+      display: block;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      opacity: 0.78;
+      margin-bottom: 4px;
+      font-weight: 900;
+    }
+
+    .weather-detail strong {
+      font-size: 1.05rem;
+    }
+
+    .gallery-controls {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: end;
+      margin-top: 12px;
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .gallery-item {
+      position: relative;
+      overflow: hidden;
+      border-radius: 18px;
+      min-height: 150px;
+      background: #eee;
+      box-shadow: 0 8px 20px rgba(16,24,40,0.08);
+    }
+
+    .gallery-item img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .gallery-caption {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 10px;
+      color: white;
+      font-weight: 800;
+      background: linear-gradient(transparent, rgba(0,0,0,0.75));
+      font-size: 0.9rem;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 22px;
+      box-shadow: var(--shadow);
+      margin-bottom: 18px;
+      backdrop-filter: blur(8px);
+    }
+
+    .card h2,
+    .card h3 {
+      margin-top: 0;
+    }
+
+    .card h2 {
+      font-size: 1.8rem;
+      letter-spacing: -0.03em;
+    }
+
+    .muted {
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .highlight-card {
+      border-left: 6px solid var(--dtu-red);
+    }
+
+    .stat-card {
+      background: linear-gradient(135deg, var(--white), var(--soft-red));
+    }
+
+    .stat-number {
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--dtu-red);
+      margin: 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 14px;
+      background: var(--white);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    th,
+    td {
+      padding: 12px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      font-size: 0.95rem;
+    }
+
+    th {
+      background: #f5f5f5;
+      color: #333333;
+      font-weight: 900;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+    }
+
+    .pill {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 900;
+      background: var(--soft-red);
+      color: var(--dtu-dark-red);
+      white-space: nowrap;
+    }
+
+    .missing {
+      background: #fff4e5;
+      color: var(--warning);
+    }
+
+    .submitted {
+      background: #ecfdf3;
+      color: var(--success);
+    }
+
+    .mismatch {
+      background: #fff1f3;
+      color: var(--danger);
+    }
+
+    form {
+      display: grid;
+      gap: 16px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 7px;
+      font-weight: 900;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 13px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      font-size: 1rem;
+      background: var(--white);
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: 3px solid rgba(153, 0, 0, 0.14);
+      border-color: var(--dtu-red);
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+    }
+
+    .three-col {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+    }
+
+    .btn {
+      border: none;
+      background: var(--dtu-red);
+      color: var(--white);
+      padding: 14px 18px;
+      border-radius: 16px;
+      cursor: pointer;
+      font-weight: 900;
+      font-size: 1rem;
+      transition: 0.2s ease;
+    }
+
+    .btn:hover {
+      background: var(--dtu-dark-red);
+      transform: translateY(-1px);
+    }
+
+    .notice {
+      border-left: 5px solid var(--dtu-red);
+      background: var(--soft-red);
+      padding: 15px;
+      border-radius: 12px;
+      margin-top: 14px;
+      line-height: 1.5;
+    }
+
+    .error {
+      color: var(--danger);
+      font-weight: 900;
+    }
+
+    .success {
+      color: var(--success);
+      font-weight: 900;
+    }
+
+    footer {
+      text-align: center;
+      color: var(--muted);
+      padding: 34px;
+    }
+
+    .splash-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background:
+        radial-gradient(circle at center, rgba(255,255,255,0.12), transparent 38%),
+        linear-gradient(135deg, var(--dtu-red), #240000);
+      color: white;
+      transition: opacity 0.45s ease, visibility 0.45s ease;
+    }
+
+    .splash-screen.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .splash-real-logo {
+      width: min(820px, 92vw);
+      max-height: 72vh;
+      object-fit: contain;
+      background: transparent;
+      border-radius: 0;
+      padding: 0;
+      box-shadow: none;
+      filter: brightness(0) invert(1);
+      animation: logoIntro 0.9s ease both;
+      transform-origin: center center;
+    }
+
+    @keyframes logoIntro {
+      from {
+        opacity: 0;
+        transform: scale(0.82) translateY(18px);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    .corner-logo {
+      position: fixed !important;
+      top: 12px !important;
+      left: 12px !important;
+      z-index: 9999 !important;
+      border: none;
+      border-radius: 6px;
+      padding: 4px;
+      background: transparent;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+      backdrop-filter: none;
+      cursor: pointer;
+      transition: none !important; /* remove any transition that could animate position */
+      opacity: 1 !important;
+      transform: none !important; /* ensure stable positioning */
+      will-change: auto; 
+      pointer-events: auto;
+    }
+
+.corner-logo {
+  position: fixed !important;
+  top: 16px !important;
+  left: 18px !important;
+  z-index: 9999 !important;
+
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+
+  cursor: pointer;
+  opacity: 1 !important;
+  transform: none !important;
+  transition: none !important;
+  animation: none !important;
+}
+
+.corner-logo.hidden-logo {
+  opacity: 0 !important;
+  pointer-events: none;
+  transform: none !important;
+}
+
+.corner-logo img {
+  display: block;
+  width: 130px;
+  height: auto;
+
+  filter: brightness(0) invert(1) !important;
+  transform: none !important;
+  transition: none !important;
+  animation: none !important;
+  pointer-events: none;
+}
+
+.corner-logo:hover {
+  transform: none !important;
+}
+
+    .corner-logo img {
+      display: block;
+      width: 110px;
+      height: auto;
+      border-radius: 4px;
+      transition: filter 0.18s ease, transform 0.18s ease;
+      pointer-events: none;
+    }
+
+    .corner-logo.logo-on-red {
+      background: transparent;
+      box-shadow: none;
+      backdrop-filter: none;
+    }
+
+    .corner-logo.logo-on-red img {
+      filter: brightness(0) invert(1);
+    }
+
+    .corner-logo.logo-on-white {
+      background: transparent;
+      box-shadow: none;
+      backdrop-filter: none;
+    }
+
+    .corner-logo.logo-on-white img {
+      filter: none;
+    }
+
+    .corner-logo:hover {
+      transform: none; /* disable hover transform to avoid movement */
+    }
+
+    @media (max-width: 860px) {
+      .info-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .gallery-controls {
+        grid-template-columns: 1fr;
+      }
+      .corner-logo img { width: 92px; }
+      .corner-logo { top: 10px; left: 10px; }
+    }
+
+    @media (max-width: 420px) {
+      .corner-logo img { width: 76px; }
+      .corner-logo { top: 8px; left: 8px; padding: 2px; }
+    }
+
+    @media (max-width: 720px) {
+      header {
+        min-height: 360px;
+      }
+
+      header::after {
+        left: auto;
+        right: 16px;
+        top: 16px;
+        width: 82px;
+        height: 52px;
+        padding: 0;
+      }
+
+      nav {
+        justify-content: flex-start;
+        overflow-x: auto;
+        flex-wrap: nowrap;
+      }
+
+      nav button {
+        white-space: nowrap;
+      }
+    }
+    /* Mobile nav toggle and mobile-specific tweaks */
+    #mobileNavToggle {
+      display: none;
+      position: fixed;
+      top: 12px;
+      right: 16px;
+      z-index: 60;
+      background: var(--dtu-red);
+      color: var(--white);
+      border: none;
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 1.2rem;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.14);
+      cursor: pointer;
+    }
+
+    @media (max-width: 720px) {
+      #mobileNavToggle { display: block; }
+      nav {
+        position: fixed;
+        top: 56px;
+        left: 8px;
+        right: 8px;
+        z-index: 55;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.28s ease, opacity 0.28s ease; 
+        opacity: 0;
+        padding: 0 8px;
+        border-radius: 12px;
+      }
+      nav.open {
+        max-height: 70vh;
+        opacity: 1;
+        padding: 12px;
+      }
+      nav button { width: 100%; text-align: left; }
+      .hero-video { display: none; }
+      header { padding: 28px 12px; }
+      .hero-content p { font-size: 1rem; }
+    }
+
+    /* Fixed DTU logo: no scroll color/position changes */
+    .corner-logo {
+      position: fixed !important;
+      top: 12px !important;
+      left: 12px !important;
+      transform: none !important;
+      transition: none !important;
+      background: transparent !important;
+      box-shadow: none !important;
+    }
+
+    .corner-logo img {
+      filter: none !important;
+      transform: none !important;
+      transition: none !important;
+    }
+
+    /* Centered opening splash logo */
+
+    .header-dtu-logo {
+      position: absolute !important;
+      top: 24px !important;
+      left: 28px !important;
+      z-index: 5 !important;
+      display: block !important;
+      width: 180px !important;
+      height: auto !important;
+      text-decoration: none !important;
+      pointer-events: auto !important;
+    }
+
+    .header-dtu-logo img {
+      display: block !important;
+      width: 100% !important;
+      height: auto !important;
+      filter: brightness(0) invert(1) drop-shadow(0 3px 10px rgba(0, 0, 0, 0.30)) !important;
+      transform: none !important;
+      transition: none !important;
+      animation: none !important;
+    }
+
+    .splash-screen {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+    }
+
+    .splash-real-logo {
+      display: block !important;
+      margin: 0 auto !important;
+      width: min(760px, 86vw) !important;
+      max-height: 68vh !important;
+      object-fit: contain !important;
+    }
+
+  
+
+    /* ==========================================================
+       FINAL LOGO FIX — keep DTU logo fixed, white and larger
+       ========================================================== */
+    #cornerLogo.corner-logo,
+    button#cornerLogo {
+      position: fixed !important;
+      top: 18px !important;
+      left: 22px !important;
+      z-index: 99999 !important;
+      width: auto !important;
+      height: auto !important;
+      display: block !important;
+      border: 0 !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+      backdrop-filter: none !important;
+      opacity: 1 !important;
+      transform: none !important;
+      transition: none !important;
+      animation: none !important;
+      will-change: auto !important;
+      pointer-events: auto !important;
+    }
+
+    #cornerLogo.corner-logo.hidden-logo {
+      opacity: 0 !important;
+      pointer-events: none !important;
+    }
+
+    #cornerLogo.corner-logo img,
+    button#cornerLogo img {
+      display: block !important;
+      width: 190px !important;
+      max-width: none !important;
+      height: auto !important;
+      border: 0 !important;
+      border-radius: 0 !important;
+      background: transparent !important;
+      filter: brightness(0) invert(1) drop-shadow(0 3px 8px rgba(0, 0, 0, 0.28)) !important;
+      transform: none !important;
+      transition: none !important;
+      animation: none !important;
+      pointer-events: none !important;
+    }
+
+    #cornerLogo.corner-logo:hover,
+    #cornerLogo.corner-logo:focus,
+    #cornerLogo.corner-logo:active {
+      transform: none !important;
+      background: transparent !important;
+      box-shadow: none !important;
+    }
+
+    .corner-logo.logo-on-red img,
+    .corner-logo.logo-on-white img {
+      filter: brightness(0) invert(1) drop-shadow(0 3px 8px rgba(0, 0, 0, 0.28)) !important;
+    }
+
+
+    .header-dtu-logo {
+      position: absolute !important;
+      top: 24px !important;
+      left: 28px !important;
+      z-index: 5 !important;
+      display: block !important;
+      width: 180px !important;
+      height: auto !important;
+      text-decoration: none !important;
+      pointer-events: auto !important;
+    }
+
+    .header-dtu-logo img {
+      display: block !important;
+      width: 100% !important;
+      height: auto !important;
+      filter: brightness(0) invert(1) drop-shadow(0 3px 10px rgba(0, 0, 0, 0.30)) !important;
+      transform: none !important;
+      transition: none !important;
+      animation: none !important;
+    }
+
+    .splash-screen {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+    }
+
+    .splash-real-logo {
+      width: min(780px, 86vw) !important;
+      max-height: 68vh !important;
+      margin: 0 auto !important;
+      object-fit: contain !important;
+      filter: brightness(0) invert(1) !important;
+      transform: none !important;
+    }
+
+    @media (max-width: 720px) {
+      #cornerLogo.corner-logo,
+      button#cornerLogo {
+        top: 14px !important;
+        left: 14px !important;
+      }
+
+      #cornerLogo.corner-logo img,
+      button#cornerLogo img {
+        width: 145px !important;
+      }
+    }
+
+    @media (max-width: 420px) {
+      #cornerLogo.corner-logo img,
+      button#cornerLogo img {
+        width: 128px !important;
+      }
+    }
+
+
+    /* ==========================================================
+       FINAL LOGO SETUP
+       - No background/watermark DTU logo
+       - Only top-left DTU logo and top-right DFSU logo
+       - Splash logo stays centered at start
+       ========================================================== */
+
+    .corner-logo,
+    #cornerLogo {
+      display: none !important;
+    }
+
+    header {
+      position: relative !important;
+      overflow: hidden !important;
+    }
+
+    header::before {
+      display: none !important;
+      content: none !important;
+      background-image: none !important;
+    }
+
+    .hero-video {
+      z-index: 0 !important;
+    }
+
+    .hero-overlay {
+      z-index: 1 !important;
+    }
+
+    .hero-content {
+      z-index: 3 !important;
+    }
+
+    header::after {
+      z-index: 4 !important;
+    }
+
+
+    .header-dtu-logo {
+      position: absolute !important;
+      top: 24px !important;
+      left: 28px !important;
+      z-index: 5 !important;
+      display: block !important;
+      width: 180px !important;
+      height: auto !important;
+      text-decoration: none !important;
+      pointer-events: auto !important;
+    }
+
+    .header-dtu-logo img {
+      display: block !important;
+      width: 100% !important;
+      height: auto !important;
+      filter: brightness(0) invert(1) drop-shadow(0 3px 10px rgba(0, 0, 0, 0.30)) !important;
+      transform: none !important;
+      transition: none !important;
+      animation: none !important;
+    }
+
+    .splash-screen {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      text-align: center !important;
+    }
+
+    .splash-real-logo {
+      display: block !important;
+      margin: 0 auto !important;
+      width: min(760px, 86vw) !important;
+      max-height: 68vh !important;
+      object-fit: contain !important;
+      filter: brightness(0) invert(1) !important;
+      transform: none !important;
+      animation: logoIntro 0.9s ease both !important;
+    }
+
+    @media (max-width: 720px) {
+      .header-dtu-logo {
+        top: 18px !important;
+        left: 16px !important;
+        width: 130px !important;
+      }
+
+      .hero-content {
+        padding-top: 42px !important;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .header-dtu-logo {
+        width: 112px !important;
+        top: 14px !important;
+        left: 12px !important;
+      }
+    }
+
+
+    /* ==========================================================
+       FINAL DTU LOGO ANIMATION
+       Splash logo starts in center, then flies to the static
+       top-left header logo. No background/watermark logo.
+       ========================================================== */
+    .corner-logo,
+    #cornerLogo {
+      display: none !important;
+    }
+
+    header::before {
+      display: none !important;
+      content: none !important;
+      background-image: none !important;
+    }
+
+    .header-dtu-logo {
+      position: absolute !important;
+      top: 24px !important;
+      left: 28px !important;
+      z-index: 5 !important;
+      display: block !important;
+      width: 180px !important;
+      height: auto !important;
+      text-decoration: none !important;
+      pointer-events: auto !important;
+      opacity: 0;
+      transition: opacity 0.25s ease !important;
+    }
+
+    .header-dtu-logo.logo-visible {
+      opacity: 1 !important;
+    }
+
+    .header-dtu-logo img {
+      display: block !important;
+      width: 100% !important;
+      height: auto !important;
+      filter: brightness(0) invert(1) drop-shadow(0 3px 10px rgba(0, 0, 0, 0.30)) !important;
+      transform: none !important;
+      transition: none !important;
+      animation: none !important;
+    }
+
+    .splash-screen {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      text-align: center !important;
+    }
+
+    .splash-real-logo {
+      display: block !important;
+      margin: 0 auto !important;
+      width: min(760px, 86vw) !important;
+      max-height: 68vh !important;
+      object-fit: contain !important;
+      filter: brightness(0) invert(1) !important;
+      transform-origin: center center !important;
+      animation: logoIntro 0.9s ease both !important;
+    }
+
+    @media (max-width: 720px) {
+      .header-dtu-logo {
+        top: 18px !important;
+        left: 16px !important;
+        width: 130px !important;
+      }
+
+      .hero-content {
+        padding-top: 42px !important;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .header-dtu-logo {
+        width: 112px !important;
+        top: 14px !important;
+        left: 12px !important;
+      }
+    }
+
+  
+
+    /* ==========================================================
+       FINAL SPLASH-TO-HEADER DTU LOGO ANIMATION FIX
+       ========================================================== */
+    .header-dtu-logo {
+      position: absolute !important;
+      top: 24px !important;
+      left: 28px !important;
+      z-index: 6 !important;
+      display: block !important;
+      width: 185px !important;
+      height: auto !important;
+      opacity: 0 !important;
+      pointer-events: auto !important;
+      text-decoration: none !important;
+      transition: opacity 0.18s ease !important;
+    }
+
+    .header-dtu-logo.logo-visible {
+      opacity: 1 !important;
+    }
+
+    .header-dtu-logo img {
+      display: block !important;
+      width: 100% !important;
+      height: auto !important;
+      filter: brightness(0) invert(1) drop-shadow(0 3px 10px rgba(0,0,0,0.35)) !important;
+      transform: none !important;
+      animation: none !important;
+      transition: none !important;
+    }
+
+    .splash-screen {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      text-align: center !important;
+    }
+
+    .splash-real-logo {
+      display: block !important;
+      width: min(760px, 82vw) !important;
+      max-height: 66vh !important;
+      object-fit: contain !important;
+      margin-left: clamp(100px, 16vw, 260px) !important; /* starts slightly more to the right */
+      filter: brightness(0) invert(1) drop-shadow(0 8px 22px rgba(0,0,0,0.28)) !important;
+      transform-origin: center center !important;
+    }
+
+    @media (max-width: 720px) {
+      .header-dtu-logo {
+        top: 18px !important;
+        left: 16px !important;
+        width: 135px !important;
+      }
+
+      .splash-real-logo {
+        width: min(500px, 78vw) !important;
+        margin-left: clamp(18px, 6vw, 70px) !important;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .header-dtu-logo {
+        top: 14px !important;
+        left: 12px !important;
+        width: 115px !important;
+      }
+    }
+
+  
+/* ==========================================================
+   CLEAN FINAL DTU SPLASH ANIMATION
+   - DTU logo starts white, slightly right of center
+   - It flies to the top-left header position
+   - No black-to-white transition
+   ========================================================== */
+
+.header-dtu-logo {
+  position: absolute !important;
+  top: 24px !important;
+  left: 28px !important;
+  z-index: 8 !important;
+  display: block !important;
+  width: 185px !important;
+  height: auto !important;
+  opacity: 0 !important;
+  pointer-events: auto !important;
+  text-decoration: none !important;
+  transition: none !important;
+}
+
+.header-dtu-logo.logo-visible {
+  opacity: 1 !important;
+}
+
+.header-dtu-logo img {
+  display: block !important;
+  width: 100% !important;
+  height: auto !important;
+  filter: brightness(0) invert(1) drop-shadow(0 3px 10px rgba(0,0,0,0.35)) !important;
+  transform: none !important;
+  transition: none !important;
+  animation: none !important;
+}
+
+.splash-screen {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 99999 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  background:
+    radial-gradient(circle at center, rgba(255,255,255,0.12), transparent 38%),
+    linear-gradient(135deg, var(--dtu-red), #240000) !important;
+  transition: opacity 0.35s ease, visibility 0.35s ease !important;
+}
+
+.splash-screen.hidden {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+.splash-real-logo {
+  display: block !important;
+  width: min(760px, 80vw) !important;
+  max-height: 66vh !important;
+  object-fit: contain !important;
+  margin-left: clamp(80px, 13vw, 190px) !important;
+  filter: brightness(0) invert(1) drop-shadow(0 8px 22px rgba(0,0,0,0.28)) !important;
+  transform-origin: center center !important;
+  transform: translate(0, 0) scale(1) !important;
+  transition: none !important;
+  animation: none !important;
+  opacity: 1 !important;
+}
+
+@media (max-width: 720px) {
+  .header-dtu-logo {
+    top: 18px !important;
+    left: 16px !important;
+    width: 135px !important;
+  }
+
+  .splash-real-logo {
+    width: min(500px, 76vw) !important;
+    margin-left: clamp(32px, 8vw, 80px) !important;
+  }
+}
+
+@media (max-width: 420px) {
+  .header-dtu-logo {
+    top: 14px !important;
+    left: 12px !important;
+    width: 115px !important;
+  }
+
+  .splash-real-logo {
+    margin-left: 28px !important;
+  }
+}
+
+  
+
+/* ==========================================================
+   FINAL EVENT FRONT + SCHEDULE CLEANUP
+   ========================================================== */
+
+/* Remove DFSU pseudo-logo completely */
+header::after {
+  display: none !important;
+  content: none !important;
+  background-image: none !important;
+}
+
+/* Make section pages cleaner: no big card box around Pools/Schedule/Standings/Submit */
+#pools > .card,
+#schedule > .card,
+#standings > .card,
+#report > .card,
+#rules > .card {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  padding: 0 !important;
+}
+
+#pools h2,
+#schedule h2,
+#standings h2,
+#report h2,
+#rules h2 {
+  margin-bottom: 6px;
+}
+
+/* Welcome teams card instead of weather */
+.teams-card {
+  background: linear-gradient(135deg, #ffffff, #fff3f3) !important;
+  border: 1px solid rgba(153,0,0,0.12) !important;
+}
+
+.eyebrow {
+  margin: 0 0 6px;
+  color: var(--dtu-red) !important;
+  font-size: 0.72rem;
+  font-weight: 950;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+}
+
+.team-showcase {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.club-tile {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.78);
+  border: 1px solid rgba(153,0,0,0.10);
+}
+
+.club-logo-wrap {
+  width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--white);
+  border: 1px solid rgba(153,0,0,0.12);
+  overflow: hidden;
+}
+
+.club-logo-wrap img {
+  width: 80%;
+  height: 80%;
+  object-fit: contain;
+}
+
+.club-logo-fallback {
+  display: none;
+  width: 100%;
+  height: 100%;
+  place-items: center;
+  background: var(--dtu-red);
+  color: white;
+  font-weight: 950;
+  font-size: 0.9rem;
+}
+
+.club-tile strong,
+.team-nowrap,
+.match-cell strong,
+td,
+th {
+  white-space: nowrap !important;
+}
+
+.club-tile span {
+  display: block;
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+/* Pool format aligned */
+.pool-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.pool-card {
+  background: rgba(255,255,255,0.9);
+  border: 1px solid rgba(153,0,0,0.12);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 8px 22px rgba(16,24,40,0.06);
+}
+
+.pool-title {
+  color: var(--dtu-red);
+  font-weight: 950;
+  font-size: 1.15rem;
+  margin-bottom: 12px;
+}
+
+.pool-team-list {
+  display: grid;
+  gap: 8px;
+}
+
+.pool-team-row {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.05);
+}
+
+.seed-badge {
+  display: inline-grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--soft-red);
+  color: var(--dtu-red);
+  font-weight: 950;
+}
+
+/* Schedule status design */
+.schedule-table-wrapper {
+  margin-top: 18px;
+}
+
+.schedule-table {
+  min-width: 820px;
+}
+
+.match-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.match-cell span {
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.schedule-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 950;
+  white-space: nowrap;
+}
+
+.schedule-status.live {
+  background: #fff1f3;
+  color: var(--danger);
+  box-shadow: 0 0 0 rgba(180,35,24,0.35);
+  animation: livePulse 1.1s infinite;
+}
+
+.schedule-status.upcoming {
+  background: #fff4e5;
+  color: var(--warning);
+}
+
+.schedule-status.finished {
+  background: #ecfdf3;
+  color: var(--success);
+}
+
+.schedule-status.not-held {
+  background: #f2f4f7;
+  color: #667085;
+}
+
+@keyframes livePulse {
+  0% { box-shadow: 0 0 0 0 rgba(180,35,24,0.36); }
+  70% { box-shadow: 0 0 0 8px rgba(180,35,24,0); }
+  100% { box-shadow: 0 0 0 0 rgba(180,35,24,0); }
+}
+
+@media (max-width: 720px) {
+  .team-showcase {
+    grid-template-columns: 1fr;
+  }
+
+  .pool-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* ==========================================================
+   FINAL REQUEST FIXES
+   - Schedule is clean and aligned, without Result column
+   - Standings has no Score column
+   - Mobile drop-down is vertical and narrow
+   - DTU splash logo starts further right
+   - Header DTU logo is slightly bigger
+   ========================================================== */
+
+/* DTU logo size and splash placement */
+.header-dtu-logo {
+  width: 205px !important;
+}
+
+.splash-real-logo {
+  margin-left: clamp(140px, 19vw, 320px) !important;
+}
+
+/* Clean, aligned schedule layout */
+.schedule-list {
+  display: grid;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.schedule-list-head,
+.schedule-card-row {
+  display: grid;
+  grid-template-columns: 105px 100px 115px minmax(360px, 1fr) 120px;
+  align-items: center;
+  gap: 12px;
+}
+
+.schedule-list-head {
+  padding: 0 16px 6px;
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 950;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.schedule-card-row {
+  padding: 13px 16px;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.92);
+  border: 1px solid rgba(153,0,0,0.10);
+  box-shadow: 0 7px 18px rgba(16,24,40,0.05);
+}
+
+.schedule-card-row.live {
+  border-color: rgba(180,35,24,0.35);
+  background: #fff8f8;
+}
+
+.schedule-time-block {
+  display: grid;
+  gap: 2px;
+  white-space: nowrap;
+}
+
+.schedule-time-block strong {
+  color: var(--dtu-red);
+  font-size: 1rem;
+}
+
+.schedule-time-block span,
+.schedule-stage,
+.schedule-field {
+  color: var(--muted);
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.schedule-match {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+  white-space: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.schedule-match::-webkit-scrollbar {
+  display: none;
+}
+
+.schedule-match strong {
+  white-space: nowrap;
+}
+
+.schedule-match span {
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.schedule-status-wrap {
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* Standings: keep names in one line and make the table less cramped */
+#standings table {
+  min-width: 720px;
+}
+
+#standings td:nth-child(2),
+#standings th:nth-child(2) {
+  min-width: 190px;
+  white-space: nowrap !important;
+}
+
+/* Mobile: narrow vertical pop-down menu */
+@media (max-width: 720px) {
+  #mobileNavToggle {
+    display: block !important;
+    top: 12px !important;
+    right: 12px !important;
+  }
+
+  nav#mainNav {
+    position: fixed !important;
+    top: 58px !important;
+    right: 12px !important;
+    left: auto !important;
+    width: min(235px, calc(100vw - 24px)) !important;
+    max-width: 235px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 5px !important;
+    max-height: 0 !important;
+    overflow: hidden !important;
+    opacity: 0 !important;
+    padding: 0 !important;
+    border-radius: 16px !important;
+    background: rgba(255,255,255,0.98) !important;
+    box-shadow: 0 18px 40px rgba(16,24,40,0.18) !important;
+    border: 1px solid rgba(153,0,0,0.12) !important;
+  }
+
+  nav#mainNav.open {
+    max-height: 72vh !important;
+    opacity: 1 !important;
+    padding: 10px !important;
+  }
+
+  nav#mainNav button {
+    width: 100% !important;
+    text-align: left !important;
+    padding: 10px 12px !important;
+    border-radius: 10px !important;
+    white-space: nowrap !important;
+  }
+
+  .header-dtu-logo {
+    width: 150px !important;
+  }
+
+  .splash-real-logo {
+    margin-left: clamp(55px, 13vw, 125px) !important;
+  }
+
+  .schedule-list-head {
+    display: none;
+  }
+
+  .schedule-card-row {
+    grid-template-columns: 72px 1fr auto;
+    grid-template-areas:
+      "time match status"
+      "time meta status";
+    gap: 8px 10px;
+    padding: 12px;
+  }
+
+  .schedule-time-block { grid-area: time; }
+  .schedule-match { grid-area: match; }
+  .schedule-status-wrap { grid-area: status; align-self: center; }
+  .schedule-field {
+    grid-area: meta;
+  }
+  .schedule-stage {
+    grid-area: meta;
+    margin-left: 82px;
+  }
+}
+
+@media (max-width: 420px) {
+  .header-dtu-logo {
+    width: 128px !important;
+  }
+
+  .splash-real-logo {
+    margin-left: 55px !important;
+  }
+
+  nav#mainNav {
+    width: min(215px, calc(100vw - 24px)) !important;
+    max-width: 215px !important;
+  }
+}
+
+  
+/* ==========================================================
+   FINAL USER REQUEST OVERRIDES
+   - Header DTU logo: slightly smaller, more top-left
+   - Splash DTU logo: starts more to the right
+   - Schedule: one row per game with horizontal scroll
+   ========================================================== */
+
+/* Header DTU logo after splash animation */
+.header-dtu-logo {
+  top: 16px !important;
+  left: 20px !important;
+  width: 180px !important;
+}
+
+/* First DTU logo on the splash screen: more to the right */
+.splash-real-logo {
+  margin-left: clamp(210px, 26vw, 430px) !important;
+}
+
+/* Schedule as one-line rows with horizontal scroll */
+.schedule-horizontal-scroll {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-top: 18px;
+  padding-bottom: 8px;
+}
+
+.schedule-table-one-line {
+  min-width: 980px !important;
+  width: 100%;
+  border-collapse: separate !important;
+  border-spacing: 0 10px !important;
+  background: transparent !important;
+  margin-top: 0 !important;
+}
+
+.schedule-table-one-line thead th {
+  background: transparent !important;
+  border: 0 !important;
+  padding: 0 14px 4px !important;
+  color: var(--muted) !important;
+  font-size: 0.74rem !important;
+  font-weight: 950 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.08em !important;
+  white-space: nowrap !important;
+}
+
+.schedule-table-one-line tbody tr {
+  background: rgba(255,255,255,0.94) !important;
+  box-shadow: 0 7px 18px rgba(16,24,40,0.05) !important;
+}
+
+.schedule-table-one-line tbody tr.live {
+  background: #fff8f8 !important;
+}
+
+.schedule-table-one-line tbody td {
+  padding: 13px 14px !important;
+  border-top: 1px solid rgba(153,0,0,0.10) !important;
+  border-bottom: 1px solid rgba(153,0,0,0.10) !important;
+  white-space: nowrap !important;
+  vertical-align: middle !important;
+}
+
+.schedule-table-one-line tbody td:first-child {
+  border-left: 1px solid rgba(153,0,0,0.10) !important;
+  border-radius: 16px 0 0 16px !important;
+}
+
+.schedule-table-one-line tbody td:last-child {
+  border-right: 1px solid rgba(153,0,0,0.10) !important;
+  border-radius: 0 16px 16px 0 !important;
+}
+
+.schedule-table-one-line .match-nowrap {
+  min-width: 390px !important;
+  white-space: nowrap !important;
+}
+
+.schedule-table-one-line .match-nowrap span {
+  color: var(--muted) !important;
+  font-size: 0.76rem !important;
+  font-weight: 950 !important;
+  text-transform: uppercase !important;
+  margin: 0 8px !important;
+}
+
+@media (max-width: 720px) {
+  .header-dtu-logo {
+    top: 14px !important;
+    left: 14px !important;
+    width: 132px !important;
+  }
+
+  .splash-real-logo {
+    margin-left: clamp(85px, 20vw, 170px) !important;
+  }
+
+  .schedule-horizontal-scroll {
+    margin-left: -4px;
+    margin-right: -4px;
+  }
+
+  .schedule-table-one-line {
+    min-width: 920px !important;
+    font-size: 0.9rem !important;
+  }
+}
+
+@media (max-width: 420px) {
+  .header-dtu-logo {
+    width: 112px !important;
+  }
+
+  .splash-real-logo {
+    margin-left: 80px !important;
+  }
+}
+
+  
+/* ==========================================================
+   FINAL RULES DROPDOWN MENU
+   ========================================================== */
+#rules > .card {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  padding: 0 !important;
+}
+
+.rules-accordion {
+  display: grid;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.rule-item {
+  background: rgba(255,255,255,0.94);
+  border: 1px solid rgba(153,0,0,0.12);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 7px 18px rgba(16,24,40,0.05);
+}
+
+.rule-item summary {
+  list-style: none;
+  cursor: pointer;
+  display: grid;
+  grid-template-columns: 46px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 18px;
+  font-weight: 950;
+  color: var(--text);
+}
+
+.rule-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.rule-item summary span {
+  display: inline-grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--soft-red);
+  color: var(--dtu-red);
+  font-size: 0.82rem;
+  font-weight: 950;
+}
+
+.rule-item summary::after {
+  content: "+";
+  color: var(--dtu-red);
+  font-size: 1.45rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.rule-item[open] summary::after {
+  content: "−";
+}
+
+.rule-content {
+  padding: 0 18px 18px 76px;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.rule-content p {
+  margin-top: 0;
+}
+
+.rule-content ul {
+  margin: 10px 0 0;
+  padding-left: 18px;
+}
+
+.rule-content li {
+  margin: 6px 0;
+}
+
+@media (max-width: 720px) {
+  .rule-item summary {
+    grid-template-columns: 38px 1fr auto;
+    padding: 14px;
+  }
+
+  .rule-content {
+    padding: 0 14px 16px 60px;
+  }
+}
+
+
+/* ==========================================================
+   ADMIN PASSWORD + NAV ORDER FIX
+   ========================================================== */
+.admin-lock-card,
+.admin-content {
+  max-width: 760px;
+  margin: 0 auto;
+  background: rgba(255,255,255,0.94);
+  border: 1px solid rgba(153,0,0,0.12);
+  border-radius: 22px;
+  padding: 22px;
+  box-shadow: 0 12px 30px rgba(16,24,40,0.08);
+}
+
+.admin-login-form {
+  max-width: 420px;
+  margin-top: 18px;
+}
+
+.admin-header-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.admin-lock-button {
+  flex: 0 0 auto;
+  background: #444 !important;
+}
+
+@media (max-width: 720px) {
+  .admin-header-row {
+    display: grid;
+  }
+
+  .admin-lock-card,
+  .admin-content {
+    padding: 17px;
+  }
+}
+
+
+/* ==========================================================
+   FINAL SCORE-IN-SCHEDULE UPDATE
+   - Adds score back to match schedule
+   - Keeps every game on one horizontal line
+   ========================================================== */
+.schedule-table-one-line {
+  min-width: 1080px !important;
+}
+
+.schedule-table-one-line .score-nowrap {
+  white-space: nowrap !important;
+  text-align: center !important;
+  color: var(--dtu-red) !important;
+  min-width: 82px !important;
+}
+
+.schedule-table-one-line .score-nowrap strong {
+  white-space: nowrap !important;
+}
+
+
+
+/* ==========================================================
+   FINAL COMPACT SCHEDULE + SPIRIT INFO ICONS
+   ========================================================== */
+.schedule-table-one-line {
+  min-width: 940px !important;
+  table-layout: auto !important;
+}
+
+.schedule-table-one-line thead th,
+.schedule-table-one-line tbody td {
+  padding-left: 10px !important;
+  padding-right: 10px !important;
+}
+
+.schedule-table-one-line .match-nowrap {
+  min-width: 300px !important;
+  white-space: nowrap !important;
+}
+
+.compact-match {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
+}
+
+.compact-team-name {
+  display: inline-block;
+  white-space: nowrap !important;
+  font-weight: 900;
+  line-height: 1.15;
+}
+
+.compact-vs {
+  color: var(--muted) !important;
+  font-size: 0.72rem !important;
+  font-weight: 950 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.04em !important;
+  margin: 0 !important;
+}
+
+.schedule-table-one-line .score-nowrap {
+  min-width: 56px !important;
+  width: 72px !important;
+  padding-left: 6px !important;
+  padding-right: 6px !important;
+  text-align: center !important;
+}
+
+.schedule-table-one-line .score-nowrap strong {
+  display: inline-block;
+  min-width: 44px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: var(--soft-red);
+  color: var(--dtu-red);
+  font-size: 0.9rem;
+}
+
+.schedule-table-one-line td:last-child,
+.schedule-table-one-line th:last-child {
+  padding-left: 8px !important;
+}
+
+.spirit-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.info-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--soft-red);
+  color: var(--dtu-red);
+  font-size: 0.72rem;
+  font-weight: 950;
+  cursor: help;
+  border: 1px solid rgba(153,0,0,0.18);
+  position: relative;
+}
+
+.info-icon::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 10px);
+  transform: translateX(-50%);
+  width: min(260px, 72vw);
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #1f1f1f;
+  color: white;
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1.35;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  z-index: 1000;
+  white-space: normal;
+  box-shadow: 0 10px 26px rgba(0,0,0,0.22);
+}
+
+.info-icon:hover::after,
+.info-icon:focus::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(-2px);
+}
+
+@media (max-width: 720px) {
+  .schedule-table-one-line {
+    min-width: 900px !important;
+  }
+
+  .schedule-table-one-line .match-nowrap {
+    min-width: 280px !important;
+  }
+
+  .info-icon::after {
+    left: auto;
+    right: -8px;
+    transform: none;
+  }
+
+  .info-icon:hover::after,
+  .info-icon:focus::after {
+    transform: translateY(-2px);
+  }
+}
+
+  
+
+/* ==========================================================
+   FINAL TWEAK: DARK CENTERED SCHEDULE TEAMS + VISIBLE SPIRIT INFO
+   ========================================================== */
+
+/* Make the match/team names darker, centered and compact */
+.schedule-table-one-line {
+  min-width: 900px !important;
+}
+
+.schedule-table-one-line .match-nowrap {
+  min-width: 260px !important;
+  text-align: center !important;
+  padding-left: 6px !important;
+  padding-right: 6px !important;
+}
+
+.compact-match {
+  width: 100% !important;
+  display: inline-flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 9px !important;
+  white-space: nowrap !important;
+}
+
+.compact-team-name {
+  color: #111111 !important;
+  font-weight: 950 !important;
+  letter-spacing: -0.01em !important;
+  text-align: center !important;
+}
+
+.compact-vs {
+  color: #990000 !important;
+  opacity: 0.85 !important;
+  font-size: 0.70rem !important;
+}
+
+.schedule-table-one-line .score-nowrap {
+  width: 62px !important;
+  min-width: 52px !important;
+  padding-left: 4px !important;
+  padding-right: 4px !important;
+}
+
+.schedule-table-one-line .score-nowrap strong {
+  min-width: 38px !important;
+  padding: 4px 7px !important;
+  font-size: 0.86rem !important;
+}
+
+/* Make spirit info icons clearly visible */
+.spirit-label {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  position: relative !important;
+}
+
+.info-icon {
+  width: 22px !important;
+  height: 22px !important;
+  min-width: 22px !important;
+  background: var(--dtu-red) !important;
+  color: white !important;
+  border: 2px solid rgba(153, 0, 0, 0.22) !important;
+  box-shadow: 0 4px 12px rgba(153,0,0,0.20) !important;
+  font-size: 0.78rem !important;
+  line-height: 1 !important;
+  font-weight: 950 !important;
+}
+
+.info-icon::after {
+  left: auto !important;
+  right: calc(100% + 12px) !important;
+  bottom: 50% !important;
+  transform: translateY(50%) !important;
+  width: min(310px, 72vw) !important;
+  background: #151515 !important;
+  color: white !important;
+  text-align: left !important;
+  z-index: 99999 !important;
+  border: 1px solid rgba(255,255,255,0.10) !important;
+}
+
+.info-icon::before {
+  content: "";
+  position: absolute;
+  right: calc(100% + 5px);
+  bottom: 50%;
+  transform: translateY(50%);
+  border-left: 7px solid #151515;
+  border-top: 7px solid transparent;
+  border-bottom: 7px solid transparent;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 100000;
+  transition: opacity 0.18s ease;
+}
+
+.info-icon:hover::after,
+.info-icon:focus::after {
+  opacity: 1 !important;
+  transform: translateY(50%) !important;
+}
+
+.info-icon:hover::before,
+.info-icon:focus::before {
+  opacity: 1 !important;
+}
+
+@media (max-width: 720px) {
+  .schedule-table-one-line {
+    min-width: 860px !important;
+  }
+
+  .schedule-table-one-line .match-nowrap {
+    min-width: 250px !important;
+  }
+
+  .info-icon::after {
+    right: auto !important;
+    left: 50% !important;
+    bottom: calc(100% + 10px) !important;
+    transform: translateX(-50%) !important;
+    width: min(300px, 86vw) !important;
+  }
+
+  .info-icon::before {
+    display: none !important;
+  }
+
+  .info-icon:hover::after,
+  .info-icon:focus::after {
+    transform: translateX(-50%) translateY(-2px) !important;
+  }
+}
+
+  
+
+/* ==========================================================
+   FINAL SMALL TWEAKS
+   - Center the Match column title
+   - Make spirit info icons a deeper DTU red
+   ========================================================== */
+
+.schedule-table-one-line thead th:nth-child(5) {
+  text-align: center !important;
+}
+
+.schedule-table-one-line thead th:nth-child(6),
+.schedule-table-one-line thead th:nth-child(7) {
+  text-align: center !important;
+}
+
+.info-icon {
+  background: #660000 !important;
+  border-color: #4d0000 !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(102, 0, 0, 0.30) !important;
+}
+
+.info-icon:hover,
+.info-icon:focus {
+  background: #4d0000 !important;
+  border-color: #330000 !important;
+}
+
+.info-icon::after {
+  background: #260000 !important;
+  border-color: rgba(255,255,255,0.14) !important;
+}
+
+.info-icon::before {
+  border-left-color: #260000 !important;
+}
+
+  
+/* ==========================================================
+   FINAL FIX: CENTER MATCH COLUMN + CLEAR SCORE REPORTING
+   ========================================================== */
+.schedule-table-one-line thead th:nth-child(5),
+.schedule-table-one-line tbody td.match-nowrap {
+  text-align: center !important;
+}
+
+.schedule-table-one-line tbody td.match-nowrap {
+  padding-left: 12px !important;
+  padding-right: 12px !important;
+}
+
+.schedule-table-one-line .compact-match {
+  width: 100% !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+
+.schedule-table-one-line .compact-team-name {
+  color: #111111 !important;
+  font-weight: 950 !important;
+}
+
+.schedule-table-one-line .score-nowrap {
+  width: 70px !important;
+  min-width: 62px !important;
+}
+
+#spiritReceiverText {
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(153, 0, 0, 0.06);
+  border-left: 4px solid var(--dtu-red);
+}
+
+  
+
+/* ==========================================================
+   TRUE CENTER FIX FOR MATCH COLUMN
+   - The VS is always exactly centered
+   - Team A aligns toward the center from the left side
+   - Team B aligns toward the center from the right side
+   ========================================================== */
+.schedule-table-one-line thead th:nth-child(5) {
+  text-align: center !important;
+}
+
+.schedule-table-one-line tbody td.match-nowrap {
+  text-align: center !important;
+  min-width: 360px !important;
+  width: 360px !important;
+  padding-left: 10px !important;
+  padding-right: 10px !important;
+}
+
+.match-grid {
+  display: grid !important;
+  grid-template-columns: minmax(140px, 1fr) 38px minmax(140px, 1fr) !important;
+  align-items: center !important;
+  justify-items: stretch !important;
+  width: 100% !important;
+  gap: 10px !important;
+  white-space: nowrap !important;
+}
+
+.match-grid .team-left {
+  text-align: right !important;
+  justify-self: end !important;
+}
+
+.match-grid .team-right {
+  text-align: left !important;
+  justify-self: start !important;
+}
+
+.match-grid .compact-vs {
+  justify-self: center !important;
+  text-align: center !important;
+  width: 38px !important;
+  margin: 0 !important;
+  color: #777777 !important;
+}
+
+.match-grid .compact-team-name {
+  color: #111111 !important;
+  font-weight: 950 !important;
+  letter-spacing: -0.01em !important;
+  white-space: nowrap !important;
+}
+
+@media (max-width: 720px) {
+  .schedule-table-one-line tbody td.match-nowrap {
+    min-width: 330px !important;
+    width: 330px !important;
+  }
+
+  .match-grid {
+    grid-template-columns: minmax(125px, 1fr) 34px minmax(125px, 1fr) !important;
+    gap: 8px !important;
+  }
+
+  .match-grid .compact-vs {
+    width: 34px !important;
+  }
+}
+
+  </style>
+</head>
+<body>
+  <div id="splashScreen" class="splash-screen">
+    <img id="splashLogo" class="splash-real-logo" src="dtu-logo.png" alt="DTU Ultimate Frisbee logo" />
+  </div>
+  <header>
+    <a class="header-dtu-logo" href="#" onclick="showPageById('info'); return false;" aria-label="Go to start page">
+      <img src="dtu-logo.png" alt="DTU Ultimate Frisbee logo" />
+    </a>
+
+    <video id="heroVideo" class="hero-video" autoplay muted loop playsinline poster="hero-poster.jpg">
+      <source src="./hero-video.mp4" type="video/mp4" />
+    </video>
+    <div class="hero-overlay"></div>
+
+    <div class="hero-content">
+      <h1>Danish Outdoor Mixed Nationals 2026</h1>
+      <p>Welcome to the official tournament website for Danish Outdoor Mixed Nationals Ultimate Frisbee.</p>
+      <div class="hero-actions">
+        <a class="hero-button" href="#" onclick="showPageById('report'); return false;">Submit Score</a>
+        <a class="hero-button secondary" href="#" onclick="showPageById('schedule'); return false;">View Schedule</a>
+      </div>
+    </div>
+  </header>
+
+  <button id="mobileNavToggle" aria-expanded="false" aria-label="Open menu">☰</button>
+  <nav id="mainNav">
+    <button class="active" data-page="info" onclick="showPage('info', this)">Home</button>
+    <button data-page="pools" onclick="showPage('pools', this)">Pools</button>
+    <button data-page="schedule" onclick="showPage('schedule', this)">Match Schedule</button>
+    <button data-page="standings" onclick="showPage('standings', this)">Standings</button>
+    <button data-page="report" onclick="showPage('report', this)">Submit Score</button>
+    <button data-page="rules" onclick="showPage('rules', this)">Rules and Tournament Info</button>
+    <button data-page="admin" onclick="showPage('admin', this)">Admin</button>
+  </nav>
+
+  <main>
+    <section id="info" class="active">
+      <div class="front-layout">
+        <div class="card highlight-card">
+          <h2>Tournament Information</h2>
+          <p class="muted">Follow the schedule, pools, live standings, results and Spirit of the Game scores throughout the tournament.</p>
+
+          <div class="info-list">
+            <div class="info-box">
+              <span>Date</span>
+              <strong>13 June 2026</strong>
+            </div>
+            <div class="info-box">
+              <span>Location</span>
+              <strong>Valby Idrætspark</strong>
+            </div>
+            <div class="info-box">
+              <span>Format</span>
+              <strong>Pool games followed by placement games, semifinals and finals.</strong>
+            </div>
+            <div class="info-box">
+              <span>Score reporting</span>
+              <strong>Each team submits the game score and gives Spirit of the Game points to the opponent after every match.</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="card teams-card">
+          <div class="teams-card-header">
+            <p class="eyebrow">Teams present today</p>
+            <h2>Welcome to all teams!</h2>
+            <p class="muted">A quick overview of the teams competing today.</p>
+          </div>
+          <div id="teamShowcase" class="team-showcase"></div>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="card stat-card">
+          <p class="stat-number" id="teamCount">8</p>
+          <h3>Teams</h3>
+          <p class="muted">Teams are divided into balanced pools based on seedings.</p>
+        </div>
+        <div class="card stat-card">
+          <p class="stat-number" id="gameCount">15</p>
+          <h3>Games</h3>
+          <p class="muted">Pool games and playoff games are shown in one shared schedule.</p>
+        </div>
+        <div class="card stat-card">
+          <p class="stat-number">20</p>
+          <h3>Spirit Points</h3>
+          <p class="muted">Spirit is scored across five categories from 0 to 4 points each.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="pools">
+      <div class="card">
+        <h2>Pools and Seedings</h2>
+        <p class="muted">Teams are placed into pools based on seedings.</p>
+        <div id="poolsContainer"></div>
+      </div>
+    </section>
+
+    <section id="schedule">
+      <div class="card">
+        <h2>Match Schedule</h2>
+        <p class="muted">The schedule shows all games. Results are reported live through the Submit Score page, so this view focuses on timing and match status.</p>
+        <div id="scheduleContainer"></div>
+      </div>
+    </section>
+
+    <section id="standings">
+      <div class="card">
+        <h2>Standings</h2>
+        <p class="muted">Standings are calculated from submitted results. Ranking is based on wins, point difference, points scored and spirit average.</p>
+        <div id="standingsContainer"></div>
+      </div>
+    </section>
+
+    <section id="rules">
+      <div class="card">
+        <h2>Rules and Tournament Info</h2>
+        <p class="muted">Open the sections below for the most important tournament rules and practical information.</p>
+
+        <div class="rules-accordion">
+          <details class="rule-item" open>
+            <summary>
+              <span>01</span>
+              <strong>Game format</strong>
+            </summary>
+            <div class="rule-content">
+              <p>Games are played according to the official tournament schedule. Pool games determine the placement for playoff games, semifinals and finals.</p>
+              <ul>
+                <li>Check the schedule before every round.</li>
+                <li>Be ready at the field before the listed start time.</li>
+                <li>The tournament organizer can adjust timing if needed.</li>
+              </ul>
+            </div>
+          </details>
+
+          <details class="rule-item">
+            <summary>
+              <span>02</span>
+              <strong>Score reporting</strong>
+            </summary>
+            <div class="rule-content">
+              <p>After each match, both teams should submit the score and Spirit of the Game points through the Submit Score page.</p>
+              <ul>
+                <li>Each team reports once per game.</li>
+                <li>If both teams report the same score, the result is confirmed.</li>
+                <li>If the score does not match, the game is marked as a mismatch for the organizer.</li>
+              </ul>
+            </div>
+          </details>
+
+          <details class="rule-item">
+            <summary>
+              <span>03</span>
+              <strong>Spirit of the Game</strong>
+            </summary>
+            <div class="rule-content">
+              <p>Each team gives Spirit points to the opponent after the game. Spirit is scored in five categories from 0 to 4 points each.</p>
+              <ul>
+                <li>Rules knowledge</li>
+                <li>Fouls and body contact</li>
+                <li>Fair-mindedness</li>
+                <li>Positive attitude</li>
+                <li>Communication</li>
+              </ul>
+            </div>
+          </details>
+
+          <details class="rule-item">
+            <summary>
+              <span>04</span>
+              <strong>Live, upcoming and finished games</strong>
+            </summary>
+            <div class="rule-content">
+              <p>The schedule status updates automatically based on time and submitted results.</p>
+              <ul>
+                <li><strong>Upcoming</strong> appears shortly before game start.</li>
+                <li><strong>Live</strong> appears while the game is expected to be in progress.</li>
+                <li><strong>Finished</strong> appears when the time has passed or the score is submitted.</li>
+                <li><strong>Not held</strong> means the game is later in the schedule.</li>
+              </ul>
+            </div>
+          </details>
+
+          <details class="rule-item">
+            <summary>
+              <span>05</span>
+              <strong>Practical field rules</strong>
+            </summary>
+            <div class="rule-content">
+              <p>Please help keep the tournament running smoothly.</p>
+              <ul>
+                <li>Respect field times and move quickly between rounds.</li>
+                <li>Keep sidelines clear and safe.</li>
+                <li>Bring water and be ready for changing weather.</li>
+                <li>Contact the tournament organizer if there is a conflict or score issue.</li>
+              </ul>
+            </div>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section id="report">
+      <div class="card">
+        <h2>Submit Match Score and Spirit</h2>
+        <p class="muted">Each team submits once after every match. The score confirms the result, and the spirit score is given to the opponent.</p>
+
+        <form id="scoreForm">
+          <div>
+            <label for="gameSelect">Select match</label>
+            <select id="gameSelect" required></select>
+          </div>
+
+          <div>
+            <label for="reportingTeam">Select your team</label>
+            <select id="reportingTeam" required></select>
+            <p class="muted" id="spiritReceiverText">Choose a match first. Teams that have already reported are removed automatically.</p>
+          </div>
+
+          <div class="two-col">
+            <div>
+              <label for="teamAScore" id="teamAScoreLabel">Score for Team A</label>
+              <input id="teamAScore" type="number" min="0" max="99" required />
+            </div>
+            <div>
+              <label for="teamBScore" id="teamBScoreLabel">Score for Team B</label>
+              <input id="teamBScore" type="number" min="0" max="99" required />
+            </div>
+          </div>
+
+          <div class="two-col">
+            <div>
+              <label for="submittedBy">Submitted by</label>
+              <input id="submittedBy" placeholder="Your name or team name" required />
+            </div>
+            <div>
+              <label for="teamPin">Team code / PIN</label>
+              <input id="teamPin" placeholder="Example: Frisbee2026" required />
+            </div>
+          </div>
+
+          <div class="card" style="box-shadow:none; margin-bottom:0; background:#fff;">
+            <h3>Spirit of the Game</h3>
+            <p class="muted">Give the opponent 0-4 points in each category. A normal good spirit score is usually around 2 points per category.</p>
+
+            <div class="three-col">
+              <div>
+                <label for="rulesKnowledge" class="spirit-label">1. Rules knowledge and use <span class="info-icon" tabindex="0" data-tooltip="How well did the opponent know and apply the rules? Good spirit means they knew the rules, accepted correct calls, and helped solve rule questions fairly.">i</span></label>
+                <input id="rulesKnowledge" type="number" min="0" max="4" step="1" required />
+              </div>
+              <div>
+                <label for="foulsContact" class="spirit-label">2. Fouls and body contact <span class="info-icon" tabindex="0" data-tooltip="Did the opponent avoid dangerous play and unnecessary body contact? Good spirit means safe play, honest foul calls, and respect for physical limits.">i</span></label>
+                <input id="foulsContact" type="number" min="0" max="4" step="1" required />
+              </div>
+              <div>
+                <label for="fairMindedness" class="spirit-label">3. Fair-mindedness <span class="info-icon" tabindex="0" data-tooltip="Did the opponent play honestly and fairly? Good spirit means no win-at-all-costs attitude, no cheating, and fair treatment of both teams.">i</span></label>
+                <input id="fairMindedness" type="number" min="0" max="4" step="1" required />
+              </div>
+              <div>
+                <label for="positiveAttitude" class="spirit-label">4. Positive attitude and self control <span class="info-icon" tabindex="0" data-tooltip="Did the opponent stay positive and controlled? Good spirit means respect, calm reactions, encouragement, and no aggressive or mocking behaviour.">i</span></label>
+                <input id="positiveAttitude" type="number" min="0" max="4" step="1" required />
+              </div>
+              <div>
+                <label for="communication" class="spirit-label">5. Communication <span class="info-icon" tabindex="0" data-tooltip="Was communication clear and respectful? Good spirit means listening, explaining calls calmly, and keeping discussions short and constructive.">i</span></label>
+                <input id="communication" type="number" min="0" max="4" step="1" required />
+              </div>
+              <div>
+                <label>Spirit total</label>
+                <input id="spiritTotal" type="text" value="0 / 20" readonly />
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label for="comment">Comment</label>
+            <textarea id="comment" rows="3" placeholder="Optional note for the tournament organizers"></textarea>
+          </div>
+
+          <button class="btn" type="submit">Submit result</button>
+          <p id="formMessage"></p>
+        </form>
+      </div>
+    </section>
+
+    <section id="admin">
+      <div class="admin-lock-card" id="adminLoginCard">
+        <p class="eyebrow">Organizer access</p>
+        <h2>Admin Login</h2>
+        <p class="muted">Enter the admin password to view submissions, missing games and score mismatches.</p>
+
+        <form id="adminLoginForm" class="admin-login-form">
+          <div>
+            <label for="adminPassword">Admin password</label>
+            <input id="adminPassword" type="password" placeholder="Enter password" autocomplete="current-password" required />
+          </div>
+          <button class="btn" type="submit">Unlock admin</button>
+          <p id="adminLoginMessage"></p>
+        </form>
+      </div>
+
+      <div class="admin-content" id="adminContent" hidden>
+        <div class="admin-header-row">
+          <div>
+            <h2>Admin Overview</h2>
+            <p class="muted">Use this page to see which games are missing submissions. In the live version, this should read from Google Sheets.</p>
+          </div>
+          <button class="btn admin-lock-button" onclick="lockAdmin()">Lock admin</button>
+        </div>
+        <div id="adminContainer"></div>
+        <button class="btn" onclick="resetResults()">Reset local test results</button>
+      </div>
+    </section>
+  </main>
+
+<footer>
+  Danish Nationals · Hosted by DTU Ultimate 
+</footer>
+
+  <script>
+    // ------------------------------------------------------------
+    // EDIT THESE VALUES
+    // ------------------------------------------------------------
+
+    const VALID_PIN = "DM2026";
+    const ADMIN_PASSWORD = "admin2026";
+    const STORAGE_KEY = "dm_mix_submissions";
+
+    const teams = [
+      { name: "DTU 1", seed: 1, pool: "A", logo: "DTU.jpg" },
+      { name: "Discflyers 1", seed: 2, pool: "B", logo: "Discflyers1.png" },
+      { name: "Copenhagen Hucks", seed: 3, pool: "A", logo: "Hucks.jpg", wideLogo: true },
+      { name: "Aarhus", seed: 4, pool: "A", logo: "Aarhus.jpg" },
+      { name: "DTU 2", seed: 5, pool: "B", logo: "DTU.jpg" },
+      { name: "Discflyers 2", seed: 6, pool: "A", logo: "Discflyers1.png" },
+      { name: "Køge Frisbee Sport", seed: 7, pool: "B", logo: "Køge.jpg" }
+    ];
+
+    const games = [
+      // Round 1
+      { id: "G01", day: "Saturday", time: "09:00", field: "Field 1", pool: "A", stage: "Pool", teamA: "DTU 1", teamB: "Discflyers 2" },
+      { id: "G02", day: "Saturday", time: "09:00", field: "Field 2", pool: "A", stage: "Pool", teamA: "Copenhagen Hucks", teamB: "Aarhus" },
+      { id: "G03", day: "Saturday", time: "09:00", field: "Field 3", pool: "B", stage: "Pool", teamA: "Discflyers 1", teamB: "Køge Frisbee Sport" },
+      // Round 2
+      { id: "G04", day: "Saturday", time: "10:30", field: "Field 1", pool: "A", stage: "Pool", teamA: "DTU 1", teamB: "Aarhus" },
+      { id: "G05", day: "Saturday", time: "10:30", field: "Field 2", pool: "A", stage: "Pool", teamA: "Copenhagen Hucks", teamB: "Discflyers 2" },
+      { id: "G06", day: "Saturday", time: "10:30", field: "Field 3", pool: "B", stage: "Pool", teamA: "Discflyers 1", teamB: "DTU 2" },
+      // Round 3
+      { id: "G07", day: "Saturday", time: "12:00", field: "Field 1", pool: "A", stage: "Pool", teamA: "DTU 1", teamB: "Copenhagen Hucks" },
+      { id: "G08", day: "Saturday", time: "12:00", field: "Field 2", pool: "A", stage: "Pool", teamA: "Aarhus", teamB: "Discflyers 2" },
+      { id: "G09", day: "Saturday", time: "12:00", field: "Field 3", pool: "B", stage: "Pool", teamA: "DTU 2", teamB: "Køge Frisbee Sport" },
+      // Playoffs
+      { id: "SF1", day: "Saturday", time: "13:30", field: "Field 1", pool: "-", stage: "Semifinal", teamA: "1A", teamB: "2B" },
+      { id: "SF2", day: "Saturday", time: "13:30", field: "Field 2", pool: "-", stage: "Semifinal", teamA: "1B", teamB: "2A" },
+      { id: "3RD", day: "Saturday", time: "15:00", field: "Field 2", pool: "-", stage: "3rd Place", teamA: "Loser SF1", teamB: "Loser SF2" },
+      { id: "FINAL", day: "Saturday", time: "15:00", field: "Field 1", pool: "-", stage: "Final", teamA: "Winner SF1", teamB: "Winner SF2" }
+    ];
+
+    // ------------------------------------------------------------
+    // LOCAL STORAGE BACKEND
+    // ------------------------------------------------------------
+
+    function getSubmissions() {
+      try {
+        return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveSubmission(submission) {
+      const subs = getSubmissions();
+      subs.push(submission);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(subs));
+    }
+
+    // ------------------------------------------------------------
+    // NAVIGATION
+    // ------------------------------------------------------------
+
+    function showPage(pageId, button) {
+      document.querySelectorAll("section").forEach(section => section.classList.remove("active"));
+      document.getElementById(pageId).classList.add("active");
+
+      document.querySelectorAll("nav button").forEach(btn => btn.classList.remove("active"));
+      if (button) button.classList.add("active");
+
+      renderAll();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function showPageById(pageId) {
+      const button = document.querySelector(`nav button[data-page="${pageId}"]`);
+      showPage(pageId, button);
+    }
+
+    function toggleHeroSound() {
+      const video = document.getElementById("heroVideo");
+      const button = document.getElementById("soundButton");
+      if (!video || !button) return;
+
+      video.muted = !video.muted;
+      button.textContent = video.muted ? "Sound On" : "Sound Off";
+      video.play().catch(error => console.log("Video play was blocked", error));
+    }
+
+    // ------------------------------------------------------------
+    // WEATHER SIMULATION
+    // ------------------------------------------------------------
+
+    function getWindDirectionLabel(degrees) {
+      const directions = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
+      return directions[Math.round(degrees / 45) % 8];
+    }
+
+    function simulateValbyWeather() {
+      const weatherOptions = [
+        { temp: 18, condition: "Partly cloudy", windSpeed: 17, windDirection: 245 },
+        { temp: 19, condition: "Light breeze", windSpeed: 13, windDirection: 230 },
+        { temp: 17, condition: "Cloudy", windSpeed: 21, windDirection: 260 },
+        { temp: 20, condition: "Mainly clear", windSpeed: 10, windDirection: 210 }
+      ];
+
+      const current = weatherOptions[Math.floor(Math.random() * weatherOptions.length)];
+      const windLabel = getWindDirectionLabel(current.windDirection);
+      const updated = new Date().toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
+
+      const weatherTemp = document.getElementById("weatherTemp");
+      const weatherTempSmall = document.getElementById("weatherTempSmall");
+      const weatherCondition = document.getElementById("weatherCondition");
+      const windSpeed = document.getElementById("windSpeed");
+      const windDirection = document.getElementById("windDirection");
+      const weatherUpdated = document.getElementById("weatherUpdated");
+      if (!weatherTemp || !weatherTempSmall || !weatherCondition || !windSpeed || !windDirection || !weatherUpdated) return;
+
+      weatherTemp.textContent = `${current.temp}°`;
+      weatherTempSmall.textContent = `${current.temp}°C`;
+      weatherCondition.textContent = `${current.condition} · demo`;
+      windSpeed.textContent = `${current.windSpeed} km/h`;
+      windDirection.textContent = `${windLabel} · ${current.windDirection}°`;
+      weatherUpdated.textContent = updated;
+    }
+
+    // ------------------------------------------------------------
+    // POOLS
+    // ------------------------------------------------------------
+
+    function getTeamInitials(name) {
+      return name
+        .split(" ")
+        .filter(Boolean)
+        .slice(0, 2)
+        .map(part => part[0])
+        .join("")
+        .toUpperCase();
+    }
+
+    function renderTeamShowcase() {
+      const container = document.getElementById("teamShowcase");
+      if (!container) return;
+
+      container.innerHTML = teams
+        .sort((a, b) => a.seed - b.seed)
+        .map(team => `
+          <div class="club-tile">
+            <div class="club-logo-wrap">
+              <img src="${team.logo}" alt="${team.name} logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';" />
+              <div class="club-logo-fallback">${getTeamInitials(team.name)}</div>
+            </div>
+            <div>
+              <strong>${team.name}</strong>
+              <span>Seed ${team.seed} · Pool ${team.pool}</span>
+            </div>
+          </div>
+        `).join("");
+    }
+
+    function renderPools() {
+      const container = document.getElementById("poolsContainer");
+      if (!container) return;
+
+      const pools = [...new Set(teams.map(team => team.pool))];
+      container.innerHTML = `<div class="pool-grid">${pools.map(pool => {
+        const poolTeams = teams.filter(team => team.pool === pool).sort((a, b) => a.seed - b.seed);
+
+        return `
+          <div class="pool-card">
+            <div class="pool-title">Pool ${pool}</div>
+            <div class="pool-team-list">
+              ${poolTeams.map(team => `
+                <div class="pool-team-row">
+                  <span class="seed-badge">${team.seed}</span>
+                  <span class="team-nowrap">${team.name}</span>
+                </div>
+              `).join("")}
+            </div>
+          </div>
+        `;
+      }).join("")}</div>`;
+    }
+
+    // ------------------------------------------------------------
+    // RESULT HELPERS
+    // ------------------------------------------------------------
+
+    function getGameSubmissions(gameId) {
+      return getSubmissions().filter(submission => submission.gameId === gameId);
+    }
+
+    function getConfirmedResult(gameId) {
+      const submissions = getGameSubmissions(gameId);
+      if (submissions.length === 0) return null;
+
+      const first = submissions[0];
+      const allSameScore = submissions.every(submission =>
+        Number(submission.teamAScore) === Number(first.teamAScore) &&
+        Number(submission.teamBScore) === Number(first.teamBScore)
+      );
+
+      return {
+        teamAScore: Number(first.teamAScore),
+        teamBScore: Number(first.teamBScore),
+        submissionsCount: submissions.length,
+        allSameScore
+      };
+    }
+
+    function getGameStatus(gameId) {
+      const result = getConfirmedResult(gameId);
+      if (!result) return { label: "Missing", className: "missing" };
+      if (!result.allSameScore) return { label: "Score mismatch", className: "mismatch" };
+      if (result.submissionsCount < 2) return { label: "1/2 submitted", className: "missing" };
+      return { label: "Confirmed", className: "submitted" };
+    }
+
+    // ------------------------------------------------------------
+    // SCHEDULE
+    // ------------------------------------------------------------
+
+    function getGameStartDate(game) {
+      const dateByDay = {
+        Saturday: "2026-06-13",
+        Sunday: "2026-06-14"
+      };
+      const date = dateByDay[game.day] || dateByDay.Saturday;
+      return new Date(`${date}T${game.time}:00`);
+    }
+
+    function getScheduleStatus(game) {
+      const result = getConfirmedResult(game.id);
+      if (result && result.allSameScore) {
+        return { label: "Finished", className: "finished" };
+      }
+
+      const now = new Date();
+      const start = getGameStartDate(game);
+      const gameDurationMinutes = 75;
+      const upcomingWindowMinutes = 15;
+      const end = new Date(start.getTime() + gameDurationMinutes * 60 * 1000);
+      const upcomingStart = new Date(start.getTime() - upcomingWindowMinutes * 60 * 1000);
+
+      if (now >= start && now <= end) return { label: "Live", className: "live" };
+      if (now >= upcomingStart && now < start) return { label: "Upcoming", className: "upcoming" };
+      if (now > end) return { label: "Finished", className: "finished" };
+      return { label: "Not held", className: "not-held" };
+    }
+
+    function renderSchedule() {
+      const container = document.getElementById("scheduleContainer");
+      if (!container) return;
+
+      container.innerHTML = `
+        <div class="schedule-horizontal-scroll" aria-label="Scrollable match schedule">
+          <table class="schedule-table-one-line">
+            <thead>
+              <tr>
+                <th>Day</th>
+                <th>Time</th>
+                <th>Field</th>
+                <th>Stage</th>
+                <th>Match</th>
+                <th>Score</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${games.map(game => {
+                const status = getScheduleStatus(game);
+                const result = getConfirmedResult(game.id);
+                const scoreText = result && result.allSameScore ? `${result.teamAScore} - ${result.teamBScore}` : "—";
+                return `
+                  <tr class="${status.className}">
+                    <td>${game.day}</td>
+                    <td><strong>${game.time}</strong></td>
+                    <td>${game.field}</td>
+                    <td>${game.stage}</td>
+                    <td class="match-nowrap"><span class="match-grid"><strong class="compact-team-name team-left">${game.teamA}</strong><span class="compact-vs">vs</span><strong class="compact-team-name team-right">${game.teamB}</strong></span></td>
+                    <td class="score-nowrap"><strong>${scoreText}</strong></td>
+                    <td><span class="schedule-status ${status.className}">${status.label}</span></td>
+                  </tr>
+                `;
+              }).join("")}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    // ------------------------------------------------------------
+    // STANDINGS
+    // ------------------------------------------------------------
+
+    function calculateStandings() {
+      const table = {};
+
+      teams.forEach(team => {
+        table[team.name] = {
+          team: team.name,
+          pool: team.pool,
+          games: 0,
+          wins: 0,
+          losses: 0,
+          pointsFor: 0,
+          pointsAgainst: 0,
+          spiritTotal: 0,
+          spiritCount: 0
+        };
+      });
+
+      games.forEach(game => {
+        const result = getConfirmedResult(game.id);
+        if (!result || !result.allSameScore) return;
+        if (!table[game.teamA] || !table[game.teamB]) return;
+
+        const a = table[game.teamA];
+        const b = table[game.teamB];
+        const aScore = Number(result.teamAScore);
+        const bScore = Number(result.teamBScore);
+
+        a.games += 1;
+        b.games += 1;
+        a.pointsFor += aScore;
+        a.pointsAgainst += bScore;
+        b.pointsFor += bScore;
+        b.pointsAgainst += aScore;
+
+        if (aScore > bScore) {
+          a.wins += 1;
+          b.losses += 1;
+        } else if (bScore > aScore) {
+          b.wins += 1;
+          a.losses += 1;
+        }
+      });
+
+      getSubmissions().forEach(submission => {
+        const receivingTeam = table[submission.spiritGivenTo];
+        if (!receivingTeam) return;
+        receivingTeam.spiritTotal += Number(submission.spiritTotal || 0);
+        receivingTeam.spiritCount += 1;
+      });
+
+      return Object.values(table).map(row => ({
+        ...row,
+        diff: row.pointsFor - row.pointsAgainst,
+        tournamentPoints: row.wins * 2,
+        spiritAvg: row.spiritCount ? row.spiritTotal / row.spiritCount : 0
+      }));
+    }
+
+    function renderStandings() {
+      const container = document.getElementById("standingsContainer");
+      if (!container) return;
+
+      const standings = calculateStandings();
+      const pools = [...new Set(teams.map(team => team.pool))];
+
+      container.innerHTML = pools.map(pool => {
+        const rows = standings
+          .filter(row => row.pool === pool)
+          .sort((a, b) =>
+            b.tournamentPoints - a.tournamentPoints ||
+            b.diff - a.diff ||
+            b.pointsFor - a.pointsFor ||
+            b.spiritAvg - a.spiritAvg
+          );
+
+        return `
+          <h3>Pool ${pool}</h3>
+          <div class="table-wrapper">
+            <table>
+              <thead><tr><th>Rank</th><th>Team</th><th>G</th><th>W</th><th>L</th><th>Points</th><th>Diff</th><th>Spirit</th></tr></thead>
+              <tbody>
+                ${rows.map((row, index) => `
+                  <tr>
+                    <td>${index + 1}</td>
+                    <td><strong>${row.team}</strong></td>
+                    <td>${row.games}</td>
+                    <td>${row.wins}</td>
+                    <td>${row.losses}</td>
+                    <td>${row.tournamentPoints}</td>
+                    <td>${row.diff > 0 ? "+" : ""}${row.diff}</td>
+                    <td>${row.spiritCount ? row.spiritAvg.toFixed(1) : "-"}</td>
+                  </tr>
+                `).join("")}
+              </tbody>
+            </table>
+          </div>
+        `;
+      }).join("");
+    }
+
+    // ------------------------------------------------------------
+    // FORM
+    // ------------------------------------------------------------
+
+    function getReportedTeamsForGame(gameId) {
+      return [...new Set(getGameSubmissions(gameId).map(submission => submission.reportingTeam))];
+    }
+
+    function getAvailableReportingTeams(game) {
+      const reportedTeams = getReportedTeamsForGame(game.id);
+      return [game.teamA, game.teamB].filter(teamName => !reportedTeams.includes(teamName));
+    }
+
+    function renderGameSelect() {
+      const select = document.getElementById("gameSelect");
+      if (!select) return;
+
+      const previousValue = select.value;
+      const openGames = games.filter(game => getAvailableReportingTeams(game).length > 0);
+
+      if (openGames.length === 0) {
+        select.innerHTML = `<option value="">All matches have been reported</option>`;
+        select.disabled = true;
+        updateReportingTeamOptions();
+        return;
+      }
+
+      select.disabled = false;
+      select.innerHTML = openGames.map(game => {
+        const status = getGameStatus(game.id);
+        const reportedCount = getReportedTeamsForGame(game.id).length;
+        const reportingText = reportedCount === 0 ? "no reports yet" : `${reportedCount}/2 reported`;
+        return `<option value="${game.id}">${game.id}: ${game.time} · ${game.teamA} vs ${game.teamB} · ${reportingText}</option>`;
+      }).join("");
+
+      if (openGames.some(game => game.id === previousValue)) {
+        select.value = previousValue;
+      }
+
+      updateReportingTeamOptions();
+    }
+
+    function updateSpiritTotal() {
+      const fields = ["rulesKnowledge", "foulsContact", "fairMindedness", "positiveAttitude", "communication"];
+      const total = fields.reduce((sum, id) => sum + Number(document.getElementById(id)?.value || 0), 0);
+      const totalField = document.getElementById("spiritTotal");
+      if (totalField) totalField.value = `${total} / 20`;
+    }
+
+    function updateReportingTeamOptions() {
+      const gameId = document.getElementById("gameSelect")?.value;
+      const reportingSelect = document.getElementById("reportingTeam");
+      const game = games.find(item => item.id === gameId);
+
+      if (!reportingSelect) return;
+
+      if (!game) {
+        reportingSelect.innerHTML = `<option value="">No match available</option>`;
+        reportingSelect.disabled = true;
+        updateSpiritReceiverText();
+        return;
+      }
+
+      const previousValue = reportingSelect.value;
+      const availableTeams = getAvailableReportingTeams(game);
+
+      if (availableTeams.length === 0) {
+        reportingSelect.innerHTML = `<option value="">Both teams have reported</option>`;
+        reportingSelect.disabled = true;
+      } else {
+        reportingSelect.disabled = false;
+        reportingSelect.innerHTML = availableTeams
+          .map(teamName => `<option value="${teamName}">${teamName}</option>`)
+          .join("");
+
+        if (availableTeams.includes(previousValue)) {
+          reportingSelect.value = previousValue;
+        }
+      }
+
+      updateSpiritReceiverText();
+    }
+
+    function updateScoreLabels(game) {
+      const teamAScoreLabel = document.getElementById("teamAScoreLabel");
+      const teamBScoreLabel = document.getElementById("teamBScoreLabel");
+
+      if (!teamAScoreLabel || !teamBScoreLabel) return;
+
+      if (!game) {
+        teamAScoreLabel.textContent = "Score for Team A";
+        teamBScoreLabel.textContent = "Score for Team B";
+        return;
+      }
+
+      teamAScoreLabel.textContent = `Game Score for ${game.teamA}`;
+      teamBScoreLabel.textContent = `Game Score for ${game.teamB}`;
+    }
+
+    function updateSpiritReceiverText() {
+      const gameId = document.getElementById("gameSelect")?.value;
+      const reportingTeam = document.getElementById("reportingTeam")?.value;
+      const game = games.find(item => item.id === gameId);
+      const text = document.getElementById("spiritReceiverText");
+
+      updateScoreLabels(game);
+
+      if (!text) return;
+
+      if (!game) {
+        text.textContent = "No match is currently available for reporting.";
+        return;
+      }
+
+      if (!reportingTeam) {
+        text.textContent = "Both teams have already reported this match.";
+        return;
+      }
+
+      const receiver = reportingTeam === game.teamA ? game.teamB : game.teamA;
+      text.textContent = `You are reporting as ${reportingTeam}. Spirit will be given to ${receiver}.`;
+    }
+
+    document.getElementById("scoreForm")?.addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      const gameId = document.getElementById("gameSelect").value;
+      const game = games.find(item => item.id === gameId);
+      const reportingTeam = document.getElementById("reportingTeam").value;
+      const message = document.getElementById("formMessage");
+
+      if (!game || !reportingTeam) {
+        message.className = "error";
+        message.textContent = "There is no available match/team to report. The match may already be fully reported.";
+        return;
+      }
+
+      const spiritGivenTo = reportingTeam === game.teamA ? game.teamB : game.teamA;
+
+      if (![game.teamA, game.teamB].includes(reportingTeam)) {
+        message.className = "error";
+        message.textContent = "Please choose one of the two teams in the selected match.";
+        return;
+      }
+
+      const alreadyReported = getSubmissions().some(
+        item => item.gameId === gameId && item.reportingTeam === reportingTeam
+      );
+
+      if (alreadyReported) {
+        message.className = "error";
+        message.textContent = `${reportingTeam} has already reported this match. Ask the tournament organizer if something needs to be corrected.`;
+        renderGameSelect();
+        return;
+      }
+
+      const teamAScore = Number(document.getElementById("teamAScore").value);
+      const teamBScore = Number(document.getElementById("teamBScore").value);
+      const submittedBy = document.getElementById("submittedBy").value.trim();
+      const teamPin = document.getElementById("teamPin").value.trim();
+
+      const rulesKnowledge = Number(document.getElementById("rulesKnowledge").value);
+      const foulsContact = Number(document.getElementById("foulsContact").value);
+      const fairMindedness = Number(document.getElementById("fairMindedness").value);
+      const positiveAttitude = Number(document.getElementById("positiveAttitude").value);
+      const communication = Number(document.getElementById("communication").value);
+
+      const spiritTotal =
+        rulesKnowledge +
+        foulsContact +
+        fairMindedness +
+        positiveAttitude +
+        communication;
+
+      const comment = document.getElementById("comment").value.trim();
+
+      if (teamPin !== VALID_PIN) {
+        message.className = "error";
+        message.textContent = "Wrong team code. Please ask the tournament organizer for the correct code.";
+        return;
+      }
+
+      if (teamAScore === teamBScore) {
+        message.className = "error";
+        message.textContent = "An ultimate game normally cannot end in a draw. Please check the score.";
+        return;
+      }
+
+      const spiritCategories = [
+        rulesKnowledge,
+        foulsContact,
+        fairMindedness,
+        positiveAttitude,
+        communication
+      ];
+
+      if (spiritCategories.some(value => value < 0 || value > 4 || !Number.isInteger(value))) {
+        message.className = "error";
+        message.textContent = "Each spirit category must be a whole number between 0 and 4.";
+        return;
+      }
+
+      const submission = {
+        timestamp: new Date().toISOString(),
+        gameId: gameId,
+        reportingTeam: reportingTeam,
+        opponentTeam: spiritGivenTo,
+        teamAScore: teamAScore,
+        teamBScore: teamBScore,
+        spiritGivenTo: spiritGivenTo,
+        rulesKnowledge: rulesKnowledge,
+        foulsContact: foulsContact,
+        fairMindedness: fairMindedness,
+        positiveAttitude: positiveAttitude,
+        communication: communication,
+        spiritTotal: spiritTotal,
+        submittedBy: submittedBy,
+        teamPin: teamPin,
+        comment: comment
+      };
+
+      saveSubmission(submission);
+
+      this.reset();
+      updateSpiritTotal();
+      renderAll();
+      updateAdminAccessView();
+
+      message.className = "success";
+      message.textContent = "Score submitted! Schedule and standings are now updated.";
+    });
+
+    // ------------------------------------------------------------
+    // ADMIN PASSWORD
+    // ------------------------------------------------------------
+
+    function isAdminUnlocked() {
+      return sessionStorage.getItem("dmUltimateAdminUnlocked") === "true";
+    }
+
+    function updateAdminAccessView() {
+      const loginCard = document.getElementById("adminLoginCard");
+      const adminContent = document.getElementById("adminContent");
+      const unlocked = isAdminUnlocked();
+
+      if (loginCard) loginCard.hidden = unlocked;
+      if (adminContent) adminContent.hidden = !unlocked;
+
+      if (unlocked) renderAdmin();
+    }
+
+    function unlockAdmin(password) {
+      const message = document.getElementById("adminLoginMessage");
+
+      if (password === ADMIN_PASSWORD) {
+        sessionStorage.setItem("dmUltimateAdminUnlocked", "true");
+        if (message) {
+          message.className = "success";
+          message.textContent = "Admin unlocked.";
+        }
+        updateAdminAccessView();
+        return true;
+      }
+
+      if (message) {
+        message.className = "error";
+        message.textContent = "Wrong password. Please try again.";
+      }
+      return false;
+    }
+
+    function lockAdmin() {
+      sessionStorage.removeItem("dmUltimateAdminUnlocked");
+      const passwordInput = document.getElementById("adminPassword");
+      const message = document.getElementById("adminLoginMessage");
+      if (passwordInput) passwordInput.value = "";
+      if (message) message.textContent = "";
+      updateAdminAccessView();
+    }
+
+    // ------------------------------------------------------------
+    // ADMIN
+    // ------------------------------------------------------------
+
+    function renderAdmin() {
+      const container = document.getElementById("adminContainer");
+      if (!container || !isAdminUnlocked()) return;
+
+      const totalSubmissions = getSubmissions().length;
+      const missingGames = games.filter(game => getGameSubmissions(game.id).length === 0);
+      const mismatchGames = games.filter(game => {
+        const result = getConfirmedResult(game.id);
+        return result && !result.allSameScore;
+      });
+
+      container.innerHTML = `
+        <div class="grid">
+          <div class="card stat-card" style="box-shadow:none;"><p class="stat-number">${totalSubmissions}</p><h3>Total submissions</h3></div>
+          <div class="card stat-card" style="box-shadow:none;"><p class="stat-number">${missingGames.length}</p><h3>Games with no submissions</h3></div>
+          <div class="card stat-card" style="box-shadow:none;"><p class="stat-number">${mismatchGames.length}</p><h3>Score mismatches</h3></div>
+        </div>
+        <div class="table-wrapper">
+          <table>
+            <thead><tr><th>Game ID</th><th>Time</th><th>Match</th><th>Submissions</th><th>Status</th></tr></thead>
+            <tbody>
+              ${games.map(game => {
+                const status = getGameStatus(game.id);
+                const count = getGameSubmissions(game.id).length;
+                return `<tr><td>${game.id}</td><td>${game.day} ${game.time}</td><td>${game.teamA} vs ${game.teamB}</td><td>${count}/2</td><td><span class="pill ${status.className}">${status.label}</span></td></tr>`;
+              }).join("")}
+            </tbody>
+          </table>
+        </div>
+      `;
+    }
+
+    function resetResults() {
+      if (confirm("Are you sure? This will delete all submitted results.")) {
+        localStorage.removeItem(STORAGE_KEY);
+        renderAll();
+        updateAdminAccessView();
+      }
+    }
+
+    // ------------------------------------------------------------
+    // INIT
+    // ------------------------------------------------------------
+
+    function renderAll() {
+      const teamCount = document.getElementById("teamCount");
+      const gameCount = document.getElementById("gameCount");
+      if (teamCount) teamCount.textContent = teams.length;
+      if (gameCount) gameCount.textContent = games.length;
+
+      renderTeamShowcase();
+      renderPools();
+      renderSchedule();
+      renderStandings();
+      renderGameSelect();
+      renderAdmin();
+    }
+
+    ["rulesKnowledge", "foulsContact", "fairMindedness", "positiveAttitude", "communication"].forEach(id => {
+      document.getElementById(id)?.addEventListener("input", updateSpiritTotal);
+    });
+
+    document.getElementById("gameSelect")?.addEventListener("change", updateReportingTeamOptions);
+    document.getElementById("reportingTeam")?.addEventListener("change", updateSpiritReceiverText);
+
+    document.getElementById("adminLoginForm")?.addEventListener("submit", function(event) {
+      event.preventDefault();
+      const password = document.getElementById("adminPassword")?.value || "";
+      unlockAdmin(password);
+    });
+
+    renderAll();
+    updateAdminAccessView();
+    updateSpiritTotal();
+    updateSpiritReceiverText();
+
+    window.addEventListener("load", function() {
+      const splash = document.getElementById("splashScreen");
+      const splashLogo = document.getElementById("splashLogo");
+      const headerLogo = document.querySelector(".header-dtu-logo");
+
+      if (!splash || !splashLogo || !headerLogo) return;
+
+      // The small header logo is hidden while the big white splash logo moves.
+      headerLogo.classList.remove("logo-visible");
+
+      setTimeout(function() {
+        const splashRect = splashLogo.getBoundingClientRect();
+        const targetRect = headerLogo.getBoundingClientRect();
+
+        const startCenterX = splashRect.left + splashRect.width / 2;
+        const startCenterY = splashRect.top + splashRect.height / 2;
+        const targetCenterX = targetRect.left + targetRect.width / 2;
+        const targetCenterY = targetRect.top + targetRect.height / 2;
+
+        const moveX = targetCenterX - startCenterX;
+        const moveY = targetCenterY - startCenterY;
+        const scale = targetRect.width / splashRect.width;
+
+        const animation = splashLogo.animate(
+          [
+            {
+              transform: "translate(0px, 0px) scale(1)",
+              filter: "brightness(0) invert(1) drop-shadow(0 8px 22px rgba(0,0,0,0.28))",
+              opacity: 1
+            },
+            {
+              transform: `translate(${moveX}px, ${moveY}px) scale(${scale})`,
+              filter: "brightness(0) invert(1) drop-shadow(0 3px 10px rgba(0,0,0,0.35))",
+              opacity: 1
+            }
+          ],
+          {
+            duration: 1350,
+            easing: "cubic-bezier(0.22, 1, 0.36, 1)",
+            fill: "forwards"
+          }
+        );
+
+        animation.onfinish = function() {
+          headerLogo.classList.add("logo-visible");
+          splash.classList.add("hidden");
+        };
+      }, 1200);
+    });
+
+    // Mobile nav toggle behavior
+    (function setupMobileNav() {
+      const toggle = document.getElementById('mobileNavToggle');
+      const nav = document.getElementById('mainNav') || document.querySelector('nav');
+      if (!toggle || !nav) return;
+      toggle.addEventListener('click', function() {
+        const open = nav.classList.toggle('open');
+        this.setAttribute('aria-expanded', open);
+      });
+      // Close menu when a nav button is clicked
+      nav.querySelectorAll('button').forEach(btn => btn.addEventListener('click', () => {
+        nav.classList.remove('open');
+        toggle.setAttribute('aria-expanded', false);
+      }));
+    })();
+    
+  </script>
+</body>
+</html>
