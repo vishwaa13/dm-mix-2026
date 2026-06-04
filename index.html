@@ -3100,9 +3100,9 @@ th {
       { id: "SF1", day: "Saturday", time: "15:00", field: "Bane 5", pool: "-", stage: "Semifinal", teamA: "2A", teamB: "1B" },
       { id: "SF2", day: "Saturday", time: "16:00", field: "Bane 5", pool: "-", stage: "Semifinal", teamA: "2B", teamB: "1A" },
       // Placement Round Robin (5th-7th)
-      { id: "P1", day: "Saturday", time: "15:00", field: "Bane 6", pool: "-", stage: "5th-7th", teamA: "4A", teamB: "3B" },
-      { id: "P2", day: "Saturday", time: "16:00", field: "Bane 6", pool: "-", stage: "5th-7th", teamA: "3A", teamB: "4A" },
-      { id: "P3", day: "Saturday", time: "17:00", field: "Bane 6", pool: "-", stage: "5th-7th", teamA: "3B", teamB: "3A" },
+      { id: "P1", day: "Saturday", time: "15:00", field: "Bane 6", pool: "-", stage: "5th-7th", teamA: "5th", teamB: "7th" },
+      { id: "P2", day: "Saturday", time: "16:00", field: "Bane 6", pool: "-", stage: "5th-7th", teamA: "6th", teamB: "5th" },
+      { id: "P3", day: "Saturday", time: "17:00", field: "Bane 6", pool: "-", stage: "5th-7th", teamA: "7th", teamB: "6th" },
       // Medal Games
       { id: "3RD", day: "Saturday", time: "17:00", field: "Bane 5", pool: "-", stage: "3rd Place", teamA: "Loser SF1", teamB: "Loser SF2" },
       { id: "FINAL", day: "Saturday", time: "18:00", field: "Bane 6", pool: "-", stage: "Final", teamA: "Winner SF1", teamB: "Winner SF2" }
@@ -3493,6 +3493,16 @@ th {
         poolTeams.forEach(function(row, index) {
           mapping[(index + 1) + pool] = row.team;
         });
+      });
+
+      // Rank the 3 non-semifinalist teams (3A, 4A, 3B) across pools → 5th, 6th, 7th
+      var nonSemifinalists = [];
+      if (mapping["3A"]) nonSemifinalists.push(standings.find(function(r) { return r.team === mapping["3A"]; }));
+      if (mapping["4A"]) nonSemifinalists.push(standings.find(function(r) { return r.team === mapping["4A"]; }));
+      if (mapping["3B"]) nonSemifinalists.push(standings.find(function(r) { return r.team === mapping["3B"]; }));
+      nonSemifinalists = nonSemifinalists.filter(Boolean).sort(wfdfTiebreaker);
+      nonSemifinalists.forEach(function(row, index) {
+        mapping[(index + 5) + "th"] = row.team;
       });
 
       ["SF1", "SF2"].forEach(function(sfId) {
