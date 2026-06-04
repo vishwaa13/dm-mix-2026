@@ -3086,23 +3086,26 @@ th {
     ];
 
     const games = [
-      // Round 1
-      { id: "G01", day: "Saturday", time: "09:00", field: "Field 1", pool: "A", stage: "Pool", teamA: "DTU 1", teamB: "Discflyers 2" },
-      { id: "G02", day: "Saturday", time: "09:00", field: "Field 2", pool: "A", stage: "Pool", teamA: "Copenhagen Hucks", teamB: "Aarhus" },
-      { id: "G03", day: "Saturday", time: "09:00", field: "Field 3", pool: "B", stage: "Pool", teamA: "Discflyers 1", teamB: "Køge Frisbee Sport" },
-      // Round 2
-      { id: "G04", day: "Saturday", time: "10:30", field: "Field 1", pool: "A", stage: "Pool", teamA: "DTU 1", teamB: "Aarhus" },
-      { id: "G05", day: "Saturday", time: "10:30", field: "Field 2", pool: "A", stage: "Pool", teamA: "Copenhagen Hucks", teamB: "Discflyers 2" },
-      { id: "G06", day: "Saturday", time: "10:30", field: "Field 3", pool: "B", stage: "Pool", teamA: "Discflyers 1", teamB: "DTU 2" },
-      // Round 3
-      { id: "G07", day: "Saturday", time: "12:00", field: "Field 1", pool: "A", stage: "Pool", teamA: "DTU 1", teamB: "Copenhagen Hucks" },
-      { id: "G08", day: "Saturday", time: "12:00", field: "Field 2", pool: "A", stage: "Pool", teamA: "Aarhus", teamB: "Discflyers 2" },
-      { id: "G09", day: "Saturday", time: "12:00", field: "Field 3", pool: "B", stage: "Pool", teamA: "DTU 2", teamB: "Køge Frisbee Sport" },
-      // Playoffs
-      { id: "SF1", day: "Saturday", time: "13:30", field: "Field 1", pool: "-", stage: "Semifinal", teamA: "1A", teamB: "2B" },
-      { id: "SF2", day: "Saturday", time: "13:30", field: "Field 2", pool: "-", stage: "Semifinal", teamA: "1B", teamB: "2A" },
-      { id: "3RD", day: "Saturday", time: "15:00", field: "Field 2", pool: "-", stage: "3rd Place", teamA: "Loser SF1", teamB: "Loser SF2" },
-      { id: "FINAL", day: "Saturday", time: "15:00", field: "Field 1", pool: "-", stage: "Final", teamA: "Winner SF1", teamB: "Winner SF2" }
+      // Pool Play
+      { id: "G01", day: "Saturday", time: "09:00", field: "Bane 5", pool: "A", stage: "Pool", teamA: "DTU 1", teamB: "Copenhagen Hucks" },
+      { id: "G02", day: "Saturday", time: "10:00", field: "Bane 5", pool: "B", stage: "Pool", teamA: "DTU 2", teamB: "Køge Frisbee Sport" },
+      { id: "G03", day: "Saturday", time: "11:00", field: "Bane 5", pool: "A", stage: "Pool", teamA: "Aarhus", teamB: "Discflyers 2" },
+      { id: "G04", day: "Saturday", time: "12:00", field: "Bane 5", pool: "A", stage: "Pool", teamA: "Copenhagen Hucks", teamB: "Discflyers 2" },
+      { id: "G05", day: "Saturday", time: "12:00", field: "Bane 6", pool: "B", stage: "Pool", teamA: "Discflyers 1", teamB: "DTU 2" },
+      { id: "G06", day: "Saturday", time: "13:00", field: "Bane 5", pool: "B", stage: "Pool", teamA: "Discflyers 1", teamB: "Køge Frisbee Sport" },
+      { id: "G07", day: "Saturday", time: "13:00", field: "Bane 6", pool: "A", stage: "Pool", teamA: "DTU 1", teamB: "Aarhus" },
+      { id: "G08", day: "Saturday", time: "14:00", field: "Bane 5", pool: "A", stage: "Pool", teamA: "DTU 1", teamB: "Discflyers 2" },
+      { id: "G09", day: "Saturday", time: "14:00", field: "Bane 6", pool: "A", stage: "Pool", teamA: "Copenhagen Hucks", teamB: "Aarhus" },
+      // Semifinals
+      { id: "SF1", day: "Saturday", time: "15:00", field: "Bane 5", pool: "-", stage: "Semifinal", teamA: "2A", teamB: "1B" },
+      { id: "SF2", day: "Saturday", time: "16:00", field: "Bane 5", pool: "-", stage: "Semifinal", teamA: "2B", teamB: "1A" },
+      // Placement Round Robin (5th-7th)
+      { id: "P1", day: "Saturday", time: "15:00", field: "Bane 6", pool: "-", stage: "5th-7th", teamA: "4A", teamB: "3B" },
+      { id: "P2", day: "Saturday", time: "16:00", field: "Bane 6", pool: "-", stage: "5th-7th", teamA: "3A", teamB: "4A" },
+      { id: "P3", day: "Saturday", time: "17:00", field: "Bane 6", pool: "-", stage: "5th-7th", teamA: "3B", teamB: "3A" },
+      // Medal Games
+      { id: "3RD", day: "Saturday", time: "17:00", field: "Bane 5", pool: "-", stage: "3rd Place", teamA: "Loser SF1", teamB: "Loser SF2" },
+      { id: "FINAL", day: "Saturday", time: "18:00", field: "Bane 6", pool: "-", stage: "Final", teamA: "Winner SF1", teamB: "Winner SF2" }
     ];
 
     // ------------------------------------------------------------
@@ -3552,6 +3555,62 @@ th {
           </div>
         `;
       }).join("");
+
+      // Placement Round Robin standings (5th-7th)
+      var placementGames = games.filter(function(g) { return g.stage === "5th-7th"; });
+      var placementTeamNames = {};
+      placementGames.forEach(function(g) {
+        var nameA = resolveTeamName(g.teamA);
+        var nameB = resolveTeamName(g.teamB);
+        if (nameA !== g.teamA) placementTeamNames[nameA] = true;
+        if (nameB !== g.teamB) placementTeamNames[nameB] = true;
+      });
+      var pTeams = Object.keys(placementTeamNames);
+
+      if (pTeams.length > 0) {
+        var pTable = {};
+        pTeams.forEach(function(name) {
+          var team = teams.find(function(t) { return t.name === name; });
+          pTable[name] = { team: name, seed: team ? team.seed : 99, games: 0, wins: 0, losses: 0, pointsFor: 0, pointsAgainst: 0, spiritTotal: 0, spiritCount: 0 };
+        });
+
+        placementGames.forEach(function(game) {
+          var result = getConfirmedResult(game.id);
+          if (!result || !result.allSameScore) return;
+          var nameA = resolveTeamName(game.teamA);
+          var nameB = resolveTeamName(game.teamB);
+          if (!pTable[nameA] || !pTable[nameB]) return;
+          var a = pTable[nameA], b = pTable[nameB];
+          var aScore = Number(result.teamAScore), bScore = Number(result.teamBScore);
+          a.games++; b.games++;
+          a.pointsFor += aScore; a.pointsAgainst += bScore;
+          b.pointsFor += bScore; b.pointsAgainst += aScore;
+          if (aScore > bScore) { a.wins++; b.losses++; }
+          else if (bScore > aScore) { b.wins++; a.losses++; }
+        });
+
+        var pRows = Object.values(pTable).map(function(row) {
+          return Object.assign({}, row, {
+            diff: row.pointsFor - row.pointsAgainst,
+            tournamentPoints: row.wins * 2,
+            spiritAvg: 0
+          });
+        }).sort(wfdfTiebreaker);
+
+        container.innerHTML += `
+          <h3>5th-7th Placement</h3>
+          <div class="table-wrapper">
+            <table>
+              <thead><tr><th>Rank</th><th>Team</th><th>G</th><th>W</th><th>L</th><th>Points</th><th>Diff</th></tr></thead>
+              <tbody>
+                ${pRows.map(function(row, index) {
+                  return '<tr><td>' + (index + 5) + '</td><td><strong>' + row.team + '</strong></td><td>' + row.games + '</td><td>' + row.wins + '</td><td>' + row.losses + '</td><td>' + row.tournamentPoints + '</td><td>' + (row.diff > 0 ? "+" : "") + row.diff + '</td></tr>';
+                }).join("")}
+              </tbody>
+            </table>
+          </div>
+        `;
+      }
     }
 
     // ------------------------------------------------------------
