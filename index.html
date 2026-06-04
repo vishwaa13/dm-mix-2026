@@ -3485,26 +3485,36 @@ th {
       const standings = calculateStandings();
       const mapping = {};
 
-      ["A", "B"].forEach(function(pool) {
-        const poolTeams = standings
-          .filter(function(row) { return row.pool === pool; })
-          .sort(wfdfTiebreaker);
+      // Only resolve pool positions → team names once ALL pool games are complete
+      var poolGames = games.filter(function(g) { return g.stage === "Pool"; });
+      var allPoolsDone = poolGames.every(function(g) {
+        var result = getConfirmedResult(g.id);
+        return result && result.allSameScore;
+      });
 
-        poolTeams.forEach(function(row, index) {
-          mapping[(index + 1) + pool] = row.team;
+      if (allPoolsDone) {
+        ["A", "B"].forEach(function(pool) {
+          const poolTeams = standings
+            .filter(function(row) { return row.pool === pool; })
+            .sort(wfdfTiebreaker);
+
+          poolTeams.forEach(function(row, index) {
+            mapping[(index + 1) + pool] = row.team;
+          });
         });
-      });
 
-      // Rank the 3 non-semifinalist teams (3A, 4A, 3B) across pools → 5th, 6th, 7th
-      var nonSemifinalists = [];
-      if (mapping["3A"]) nonSemifinalists.push(standings.find(function(r) { return r.team === mapping["3A"]; }));
-      if (mapping["4A"]) nonSemifinalists.push(standings.find(function(r) { return r.team === mapping["4A"]; }));
-      if (mapping["3B"]) nonSemifinalists.push(standings.find(function(r) { return r.team === mapping["3B"]; }));
-      nonSemifinalists = nonSemifinalists.filter(Boolean).sort(wfdfTiebreaker);
-      nonSemifinalists.forEach(function(row, index) {
-        mapping[(index + 5) + "th"] = row.team;
-      });
+        // Rank the 3 non-semifinalist teams (3A, 4A, 3B) across pools → 5th, 6th, 7th
+        var nonSemifinalists = [];
+        if (mapping["3A"]) nonSemifinalists.push(standings.find(function(r) { return r.team === mapping["3A"]; }));
+        if (mapping["4A"]) nonSemifinalists.push(standings.find(function(r) { return r.team === mapping["4A"]; }));
+        if (mapping["3B"]) nonSemifinalists.push(standings.find(function(r) { return r.team === mapping["3B"]; }));
+        nonSemifinalists = nonSemifinalists.filter(Boolean).sort(wfdfTiebreaker);
+        nonSemifinalists.forEach(function(row, index) {
+          mapping[(index + 5) + "th"] = row.team;
+        });
+      }
 
+      // Only resolve SF winner/loser once that specific semifinal has a result
       ["SF1", "SF2"].forEach(function(sfId) {
         var game = games.find(function(g) { return g.id === sfId; });
         if (!game) return;
