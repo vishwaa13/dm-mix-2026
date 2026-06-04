@@ -3357,6 +3357,61 @@ th {
     // STANDINGS
     // ------------------------------------------------------------
 
+    // Returns head-to-head result between two teams (pool games only)
+    function getHeadToHead(teamA, teamB) {
+      for (var i = 0; i < games.length; i++) {
+        var game = games[i];
+        if (game.stage !== "Pool") continue;
+        var result = getConfirmedResult(game.id);
+        if (!result || !result.allSameScore) continue;
+        if (game.teamA === teamA && game.teamB === teamB) {
+          return { aScore: result.teamAScore, bScore: result.teamBScore };
+        }
+        if (game.teamA === teamB && game.teamB === teamA) {
+          return { aScore: result.teamBScore, bScore: result.teamAScore };
+        }
+      }
+      return null;
+    }
+
+    // WFDF tiebreaker sort comparator
+    // 1. Head-to-head result
+    // 2. Head-to-head goal differential
+    // 3. Goal difference (all pool games)
+    // 4. Most goals scored (all pool games)
+    // 5. Fewest points allowed (all pool games)
+    // 6. Spirit score (lower spirit = ranked lower)
+    // 7. Seed (initial seeding as final fallback)
+    function wfdfTiebreaker(a, b) {
+      // First: tournament points (wins)
+      if (b.tournamentPoints !== a.tournamentPoints) return b.tournamentPoints - a.tournamentPoints;
+
+      // 1. Head-to-head win
+      var h2h = getHeadToHead(a.team, b.team);
+      if (h2h) {
+        if (h2h.aScore > h2h.bScore) return -1; // a won head-to-head
+        if (h2h.bScore > h2h.aScore) return 1;  // b won head-to-head
+        // 2. Head-to-head goal differential (if somehow tied score, shouldn't happen in ultimate)
+        if ((h2h.aScore - h2h.bScore) !== (h2h.bScore - h2h.aScore))
+          return (h2h.bScore - h2h.aScore) - (h2h.aScore - h2h.bScore);
+      }
+
+      // 3. Goal difference (all pool games)
+      if (b.diff !== a.diff) return b.diff - a.diff;
+
+      // 4. Most goals scored (all pool games)
+      if (b.pointsFor !== a.pointsFor) return b.pointsFor - a.pointsFor;
+
+      // 5. Fewest points allowed (all pool games)
+      if (a.pointsAgainst !== b.pointsAgainst) return a.pointsAgainst - b.pointsAgainst;
+
+      // 6. Spirit score (higher spirit = ranked higher)
+      if (b.spiritAvg !== a.spiritAvg) return b.spiritAvg - a.spiritAvg;
+
+      // 7. Seed as final fallback
+      return a.seed - b.seed;
+    }
+
     function calculateStandings() {
       const table = {};
 
@@ -3430,13 +3485,7 @@ th {
       ["A", "B"].forEach(function(pool) {
         const poolTeams = standings
           .filter(function(row) { return row.pool === pool; })
-          .sort(function(a, b) {
-            return (b.tournamentPoints - a.tournamentPoints) ||
-                   (b.diff - a.diff) ||
-                   (b.pointsFor - a.pointsFor) ||
-                   (b.spiritAvg - a.spiritAvg) ||
-                   (a.seed - b.seed);
-          });
+          .sort(wfdfTiebreaker);
 
         poolTeams.forEach(function(row, index) {
           mapping[(index + 1) + pool] = row.team;
@@ -3478,13 +3527,7 @@ th {
       container.innerHTML = pools.map(pool => {
         const rows = standings
           .filter(row => row.pool === pool)
-          .sort((a, b) =>
-            b.tournamentPoints - a.tournamentPoints ||
-            b.diff - a.diff ||
-            b.pointsFor - a.pointsFor ||
-            b.spiritAvg - a.spiritAvg ||
-            a.seed - b.seed
-          );
+          .sort(wfdfTiebreaker);
 
         return `
           <h3>Pool ${pool}</h3>
