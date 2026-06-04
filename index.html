@@ -3333,13 +3333,15 @@ th {
                 const status = getScheduleStatus(game);
                 const result = getConfirmedResult(game.id);
                 const scoreText = result && result.allSameScore ? `${result.teamAScore} - ${result.teamBScore}` : "—";
+                const tA = resolveTeamName(game.teamA);
+                const tB = resolveTeamName(game.teamB);
                 return `
                   <tr class="${status.className}">
                     <td>${game.day}</td>
                     <td><strong>${game.time}</strong></td>
                     <td>${game.field}</td>
                     <td>${game.stage}</td>
-                    <td class="match-nowrap"><span class="match-grid"><strong class="compact-team-name team-left">${game.teamA}</strong><span class="compact-vs">vs</span><strong class="compact-team-name team-right">${game.teamB}</strong></span></td>
+                    <td class="match-nowrap"><span class="match-grid"><strong class="compact-team-name team-left">${tA}</strong><span class="compact-vs">vs</span><strong class="compact-team-name team-right">${tB}</strong></span></td>
                     <td class="score-nowrap"><strong>${scoreText}</strong></td>
                     <td><span class="schedule-status ${status.className}">${status.label}</span></td>
                   </tr>
@@ -3362,6 +3364,7 @@ th {
         table[team.name] = {
           team: team.name,
           pool: team.pool,
+          seed: team.seed,
           games: 0,
           wins: 0,
           losses: 0,
@@ -3409,8 +3412,60 @@ th {
         ...row,
         diff: row.pointsFor - row.pointsAgainst,
         tournamentPoints: row.wins * 2,
-        spiritAvg: row.spiritCount ? row.spiritTotal / row.spiritCount : 0
+        spiritAvg: row.spiritCount ? row.spiritTotal / row.spiritCount : 0,
+        seed: row.seed
       }));
+    }
+
+    // ------------------------------------------------------------
+    // PLAYOFF TEAM RESOLUTION
+    // ------------------------------------------------------------
+
+    let playoffTeamMapping = {};
+
+    function resolvePlayoffTeams() {
+      const standings = calculateStandings();
+      const mapping = {};
+
+      ["A", "B"].forEach(function(pool) {
+        const poolTeams = standings
+          .filter(function(row) { return row.pool === pool; })
+          .sort(function(a, b) {
+            return (b.tournamentPoints - a.tournamentPoints) ||
+                   (b.diff - a.diff) ||
+                   (b.pointsFor - a.pointsFor) ||
+                   (b.spiritAvg - a.spiritAvg) ||
+                   (a.seed - b.seed);
+          });
+
+        poolTeams.forEach(function(row, index) {
+          mapping[(index + 1) + pool] = row.team;
+        });
+      });
+
+      ["SF1", "SF2"].forEach(function(sfId) {
+        var game = games.find(function(g) { return g.id === sfId; });
+        if (!game) return;
+        var result = getConfirmedResult(sfId);
+        var teamA = mapping[game.teamA] || game.teamA;
+        var teamB = mapping[game.teamB] || game.teamB;
+        if (result && result.allSameScore) {
+          if (result.teamAScore > result.teamBScore) {
+            mapping["Winner " + sfId] = teamA;
+            mapping["Loser " + sfId] = teamB;
+          } else {
+            mapping["Winner " + sfId] = teamB;
+            mapping["Loser " + sfId] = teamA;
+          }
+        }
+      });
+
+      playoffTeamMapping = mapping;
+      return mapping;
+    }
+
+    function resolveTeamName(name) {
+      return playoffTeamMapping[name] || name;
     }
 
     function renderStandings() {
@@ -3427,7 +3482,8 @@ th {
             b.tournamentPoints - a.tournamentPoints ||
             b.diff - a.diff ||
             b.pointsFor - a.pointsFor ||
-            b.spiritAvg - a.spiritAvg
+            b.spiritAvg - a.spiritAvg ||
+            a.seed - b.seed
           );
 
         return `
@@ -3465,7 +3521,7 @@ th {
 
     function getAvailableReportingTeams(game) {
       const reportedTeams = getReportedTeamsForGame(game.id);
-      return [game.teamA, game.teamB].filter(teamName => !reportedTeams.includes(teamName));
+      return [resolveTeamName(game.teamA), resolveTeamName(game.teamB)].filter(teamName => !reportedTeams.includes(teamName));
     }
 
     function renderGameSelect() {
@@ -3487,7 +3543,7 @@ th {
         const status = getGameStatus(game.id);
         const reportedCount = getReportedTeamsForGame(game.id).length;
         const reportingText = reportedCount === 0 ? "no reports yet" : `${reportedCount}/2 reported`;
-        return `<option value="${game.id}">${game.id}: ${game.time} · ${game.teamA} vs ${game.teamB} · ${reportingText}</option>`;
+        return `<option value="${game.id}">${game.id}: ${game.time} · ${resolveTeamName(game.teamA)} vs ${resolveTeamName(game.teamB)} · ${reportingText}</option>`;
       }).join("");
 
       if (openGames.some(game => game.id === previousValue)) {
@@ -3550,8 +3606,8 @@ th {
         return;
       }
 
-      teamAScoreLabel.textContent = `Game Score for ${game.teamA}`;
-      teamBScoreLabel.textContent = `Game Score for ${game.teamB}`;
+      teamAScoreLabel.textContent = `Game Score for ${resolveTeamName(game.teamA)}`;
+      teamBScoreLabel.textContent = `Game Score for ${resolveTeamName(game.teamB)}`;
     }
 
     function updateSpiritReceiverText() {
@@ -3574,7 +3630,9 @@ th {
         return;
       }
 
-      const receiver = reportingTeam === game.teamA ? game.teamB : game.teamA;
+      const resolvedA = resolveTeamName(game.teamA);
+      const resolvedB = resolveTeamName(game.teamB);
+      const receiver = reportingTeam === resolvedA ? resolvedB : resolvedA;
       text.textContent = `You are reporting as ${reportingTeam}. Spirit will be given to ${receiver}.`;
     }
 
@@ -3592,9 +3650,11 @@ th {
         return;
       }
 
-      const spiritGivenTo = reportingTeam === game.teamA ? game.teamB : game.teamA;
+      const resolvedA = resolveTeamName(game.teamA);
+      const resolvedB = resolveTeamName(game.teamB);
+      const spiritGivenTo = reportingTeam === resolvedA ? resolvedB : resolvedA;
 
-      if (![game.teamA, game.teamB].includes(reportingTeam)) {
+      if (![resolvedA, resolvedB].includes(reportingTeam)) {
         message.className = "error";
         message.textContent = "Please choose one of the two teams in the selected match.";
         return;
@@ -3766,7 +3826,7 @@ th {
               ${games.map(game => {
                 const status = getGameStatus(game.id);
                 const count = getGameSubmissions(game.id).length;
-                return `<tr><td>${game.id}</td><td>${game.day} ${game.time}</td><td>${game.teamA} vs ${game.teamB}</td><td>${count}/2</td><td><span class="pill ${status.className}">${status.label}</span></td></tr>`;
+                return `<tr><td>${game.id}</td><td>${game.day} ${game.time}</td><td>${resolveTeamName(game.teamA)} vs ${resolveTeamName(game.teamB)}</td><td>${count}/2</td><td><span class="pill ${status.className}">${status.label}</span></td></tr>`;
               }).join("")}
             </tbody>
           </table>
@@ -3785,6 +3845,8 @@ th {
     // ------------------------------------------------------------
 
     function renderAll() {
+      resolvePlayoffTeams();
+
       const teamCount = document.getElementById("teamCount");
       const gameCount = document.getElementById("gameCount");
       if (teamCount) teamCount.textContent = teams.length;
