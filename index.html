@@ -2750,7 +2750,7 @@ th {
       <img src="dtu-logo.png" alt="DTU Ultimate Frisbee logo" />
     </a>
 
-    <video id="heroVideo" class="hero-video" autoplay muted loop playsinline poster="hero-poster.jpg">
+    <video id="heroVideo" class="hero-video" autoplay muted loop playsinline poster="">
       <source src="./hero-video.mp4" type="video/mp4" />
     </video>
     <div class="hero-overlay"></div>
@@ -3371,9 +3371,9 @@ th {
                   scoreText = result.teamAScore + " - " + result.teamBScore;
                 } else if (result && !result.allSameScore) {
                   var subs = getLatestSubmissions(game.id);
-                  var tA = resolveTeamName(game.teamA);
-                  var tB = resolveTeamName(game.teamB);
-                  scoreText = subs.map(function(s) { return s.reportingTeam + " says " + tA + " " + s.teamAScore + " - " + s.teamBScore + " " + tB; }).join(" | ");
+                  var dispA = resolveTeamName(game.teamA);
+                  var dispB = resolveTeamName(game.teamB);
+                  scoreText = subs.map(function(s) { return s.reportingTeam + " says " + dispA + " " + s.teamAScore + " - " + s.teamBScore + " " + dispB; }).join(" | ");
                 } else if (getLatestSubmissions(game.id).length === 1) {
                   var sub = getLatestSubmissions(game.id)[0];
                   scoreText = sub.teamAScore + " - " + sub.teamBScore + " (1/2)";
