@@ -2865,12 +2865,14 @@ th {
           <details class="rule-item" open>
             <summary>
               <span>01</span>
-              <strong>Game format</strong>
+              <strong>Game format and time caps</strong>
             </summary>
             <div class="rule-content">
-              <p>Games are played according to the official tournament schedule. Pool games determine the placement for playoff games, semifinals and finals.</p>
+              <p>All games are played to <strong>13 points</strong>. The following time rules apply:</p>
               <ul>
-                <li>Check the schedule before every round.</li>
+                <li><strong>Hard time cap:</strong> 45 minutes. At time cap the current point is played to completion. If a team is then leading by more than 2 points, the game is over.</li>
+                <li><strong>Half-time cap:</strong> 25 minutes or 7 points (whichever comes first).</li>
+                <li><strong>Timeouts:</strong> 1 timeout per team per game, lasting 75 seconds.</li>
                 <li>Be ready at the field before the listed start time.</li>
                 <li>The tournament organizer can adjust timing if needed.</li>
               </ul>
@@ -2880,6 +2882,23 @@ th {
           <details class="rule-item">
             <summary>
               <span>02</span>
+              <strong>Tournament structure</strong>
+            </summary>
+            <div class="rule-content">
+              <p>7 teams are divided into two pools. All games are played on Saturday on Bane 5 and Bane 6.</p>
+              <ul>
+                <li><strong>Pool A</strong> (4 teams): full round robin (6 games).</li>
+                <li><strong>Pool B</strong> (3 teams): full round robin (3 games).</li>
+                <li><strong>Top 4 crossovers:</strong> the top 2 from each pool play semifinals (A1 vs B2, A2 vs B1), followed by a bronze match and final.</li>
+                <li><strong>Bottom 3 round robin:</strong> the remaining teams (A3, A4, B3) play a round robin to determine 5th, 6th, and 7th place.</li>
+                <li>There is a <strong>20-minute break</strong> (14:00 – 14:20) between pool play and the playoff rounds.</li>
+              </ul>
+            </div>
+          </details>
+
+          <details class="rule-item">
+            <summary>
+              <span>03</span>
               <strong>Score reporting</strong>
             </summary>
             <div class="rule-content">
@@ -2894,7 +2913,7 @@ th {
 
           <details class="rule-item">
             <summary>
-              <span>03</span>
+              <span>04</span>
               <strong>Spirit of the Game</strong>
             </summary>
             <div class="rule-content">
@@ -2911,7 +2930,7 @@ th {
 
           <details class="rule-item">
             <summary>
-              <span>04</span>
+              <span>05</span>
               <strong>Live, upcoming and finished games</strong>
             </summary>
             <div class="rule-content">
@@ -2927,7 +2946,7 @@ th {
 
           <details class="rule-item">
             <summary>
-              <span>05</span>
+              <span>06</span>
               <strong>Practical field rules</strong>
             </summary>
             <div class="rule-content">
@@ -3086,36 +3105,38 @@ th {
     // ─────────────────────────────────────────────────────────
 
     const teams = [
-      { name: "DTU 1", seed: 1, pool: "A", logo: "DTU.jpg" },
-      { name: "Discflyers 1", seed: 2, pool: "B", logo: "Discflyers1.png" },
+      { name: "DTU 1", seed: 1, pool: "B", logo: "DTU.jpg" },
+      { name: "Discflyers 1", seed: 2, pool: "A", logo: "Discflyers1.png" },
       { name: "Copenhagen Hucks", seed: 3, pool: "A", logo: "Hucks.jpg", wideLogo: true },
-      { name: "Aarhus", seed: 4, pool: "A", logo: "Aarhus.jpg" },
-      { name: "DTU 2", seed: 5, pool: "B", logo: "DTU.jpg" },
-      { name: "Discflyers 2", seed: 6, pool: "A", logo: "Discflyers1.png" },
-      { name: "Køge Frisbee Sport", seed: 7, pool: "B", logo: "Køge.jpg" }
+      { name: "Aarhus", seed: 4, pool: "B", logo: "Aarhus.jpg" },
+      { name: "DTU 2", seed: 5, pool: "A", logo: "DTU.jpg" },
+      { name: "Discflyers 2", seed: 6, pool: "B", logo: "Discflyers1.png" },
+      { name: "Køge Frisbee Sport", seed: 7, pool: "A", logo: "Køge.jpg" }
     ];
 
     const games = [
-      // Pool Play
-      { id: "G01", day: "Saturday", time: "09:00", field: "Bane 5", pool: "A", stage: "Pool", teamA: "DTU 1", teamB: "Copenhagen Hucks" },
-      { id: "G02", day: "Saturday", time: "10:00", field: "Bane 5", pool: "B", stage: "Pool", teamA: "DTU 2", teamB: "Køge Frisbee Sport" },
-      { id: "G03", day: "Saturday", time: "11:00", field: "Bane 5", pool: "A", stage: "Pool", teamA: "Aarhus", teamB: "Discflyers 2" },
-      { id: "G04", day: "Saturday", time: "12:00", field: "Bane 5", pool: "A", stage: "Pool", teamA: "Copenhagen Hucks", teamB: "Discflyers 2" },
-      { id: "G05", day: "Saturday", time: "12:00", field: "Bane 6", pool: "B", stage: "Pool", teamA: "Discflyers 1", teamB: "DTU 2" },
-      { id: "G06", day: "Saturday", time: "13:00", field: "Bane 5", pool: "B", stage: "Pool", teamA: "Discflyers 1", teamB: "Køge Frisbee Sport" },
-      { id: "G07", day: "Saturday", time: "13:00", field: "Bane 6", pool: "A", stage: "Pool", teamA: "DTU 1", teamB: "Aarhus" },
-      { id: "G08", day: "Saturday", time: "14:00", field: "Bane 5", pool: "A", stage: "Pool", teamA: "DTU 1", teamB: "Discflyers 2" },
-      { id: "G09", day: "Saturday", time: "14:00", field: "Bane 6", pool: "A", stage: "Pool", teamA: "Copenhagen Hucks", teamB: "Aarhus" },
-      // Semifinals
-      { id: "SF1", day: "Saturday", time: "15:00", field: "Bane 5", pool: "-", stage: "Semifinal", teamA: "2A", teamB: "1B" },
-      { id: "SF2", day: "Saturday", time: "16:00", field: "Bane 5", pool: "-", stage: "Semifinal", teamA: "2B", teamB: "1A" },
-      // Placement Round Robin (5th-7th)
-      { id: "P1", day: "Saturday", time: "15:00", field: "Bane 6", pool: "-", stage: "5th-7th", teamA: "5th", teamB: "7th" },
-      { id: "P2", day: "Saturday", time: "16:00", field: "Bane 6", pool: "-", stage: "5th-7th", teamA: "6th", teamB: "5th" },
-      { id: "P3", day: "Saturday", time: "17:00", field: "Bane 6", pool: "-", stage: "5th-7th", teamA: "7th", teamB: "6th" },
-      // Medal Games
-      { id: "3RD", day: "Saturday", time: "17:00", field: "Bane 5", pool: "-", stage: "3rd Place", teamA: "Loser SF1", teamB: "Loser SF2" },
-      { id: "FINAL", day: "Saturday", time: "18:00", field: "Bane 6", pool: "-", stage: "Final", teamA: "Winner SF1", teamB: "Winner SF2" }
+      // ── Pool Play ──────────────────────────────────────────
+      // Pool A: Discflyers 1 (M2), Hucks (M3), DTU 2 (M5), Køge (M7) — 4 teams, 6 games
+      // Pool B: DTU 1 (M1), Aarhus (M4), Discflyers 2 (M6) — 3 teams, 3 games
+      { id: "G01", day: "Saturday", time: "09:00", field: "Bane 5", pool: "A", stage: "Pool", teamA: "DTU 2", teamB: "Køge Frisbee Sport" },
+      { id: "G02", day: "Saturday", time: "09:50", field: "Bane 5", pool: "B", stage: "Pool", teamA: "DTU 1", teamB: "Discflyers 2" },
+      { id: "G03", day: "Saturday", time: "10:40", field: "Bane 5", pool: "A", stage: "Pool", teamA: "Copenhagen Hucks", teamB: "Discflyers 1" },
+      { id: "G04", day: "Saturday", time: "11:30", field: "Bane 5", pool: "A", stage: "Pool", teamA: "Køge Frisbee Sport", teamB: "Discflyers 1" },
+      { id: "G05", day: "Saturday", time: "11:30", field: "Bane 6", pool: "B", stage: "Pool", teamA: "Aarhus", teamB: "DTU 1" },
+      { id: "G06", day: "Saturday", time: "12:20", field: "Bane 5", pool: "B", stage: "Pool", teamA: "Aarhus", teamB: "Discflyers 2" },
+      { id: "G07", day: "Saturday", time: "12:20", field: "Bane 6", pool: "A", stage: "Pool", teamA: "DTU 2", teamB: "Copenhagen Hucks" },
+      { id: "G08", day: "Saturday", time: "13:10", field: "Bane 5", pool: "A", stage: "Pool", teamA: "DTU 2", teamB: "Discflyers 1" },
+      { id: "G09", day: "Saturday", time: "13:10", field: "Bane 6", pool: "A", stage: "Pool", teamA: "Køge Frisbee Sport", teamB: "Copenhagen Hucks" },
+      // ── Semifinals (Top 4 crossovers) ──────────────────────
+      { id: "SF1", day: "Saturday", time: "14:20", field: "Bane 6", pool: "-", stage: "Semifinal", teamA: "2A", teamB: "1B" },
+      { id: "SF2", day: "Saturday", time: "15:10", field: "Bane 6", pool: "-", stage: "Semifinal", teamA: "2B", teamB: "1A" },
+      // ── Placement Round Robin (5th-7th) ────────────────────
+      { id: "P1", day: "Saturday", time: "14:20", field: "Bane 5", pool: "-", stage: "5th-7th", teamA: "4A", teamB: "3B" },
+      { id: "P2", day: "Saturday", time: "15:10", field: "Bane 5", pool: "-", stage: "5th-7th", teamA: "3A", teamB: "4A" },
+      { id: "P3", day: "Saturday", time: "16:00", field: "Bane 5", pool: "-", stage: "5th-7th", teamA: "3B", teamB: "3A" },
+      // ── Medal Games ────────────────────────────────────────
+      { id: "3RD", day: "Saturday", time: "16:00", field: "Bane 6", pool: "-", stage: "3rd Place", teamA: "Loser SF1", teamB: "Loser SF2" },
+      { id: "FINAL", day: "Saturday", time: "16:50", field: "Bane 6", pool: "-", stage: "Final", teamA: "Winner SF1", teamB: "Winner SF2" }
     ];
 
     // ------------------------------------------------------------
@@ -3545,15 +3566,7 @@ th {
           });
         });
 
-        // Rank the 3 non-semifinalist teams (3A, 4A, 3B) across pools → 5th, 6th, 7th
-        var nonSemifinalists = [];
-        if (mapping["3A"]) nonSemifinalists.push(standings.find(function(r) { return r.team === mapping["3A"]; }));
-        if (mapping["4A"]) nonSemifinalists.push(standings.find(function(r) { return r.team === mapping["4A"]; }));
-        if (mapping["3B"]) nonSemifinalists.push(standings.find(function(r) { return r.team === mapping["3B"]; }));
-        nonSemifinalists = nonSemifinalists.filter(Boolean).sort(wfdfTiebreaker);
-        nonSemifinalists.forEach(function(row, index) {
-          mapping[(index + 5) + "th"] = row.team;
-        });
+        // 3A, 4A, 3B are used directly in placement game definitions — no extra mapping needed
       }
 
       // Only resolve SF winner/loser once that specific semifinal has a result
