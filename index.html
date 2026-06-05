@@ -2963,12 +2963,12 @@ th {
 
           <div class="two-col">
             <div>
-              <label for="teamAScore" id="teamAScoreLabel">Score for Team A</label>
-              <input id="teamAScore" type="number" min="0" max="99" required />
+              <label for="myScore" id="myScoreLabel">Your team's score</label>
+              <input id="myScore" type="number" min="0" max="99" required />
             </div>
             <div>
-              <label for="teamBScore" id="teamBScoreLabel">Score for Team B</label>
-              <input id="teamBScore" type="number" min="0" max="99" required />
+              <label for="opponentScore" id="opponentScoreLabel">Opponent's score</label>
+              <input id="opponentScore" type="number" min="0" max="99" required />
             </div>
           </div>
 
@@ -3371,7 +3371,9 @@ th {
                   scoreText = result.teamAScore + " - " + result.teamBScore;
                 } else if (result && !result.allSameScore) {
                   var subs = getLatestSubmissions(game.id);
-                  scoreText = subs.map(function(s) { return s.reportingTeam + ": " + s.teamAScore + "-" + s.teamBScore; }).join(" / ");
+                  var tA = resolveTeamName(game.teamA);
+                  var tB = resolveTeamName(game.teamB);
+                  scoreText = subs.map(function(s) { return s.reportingTeam + " says " + tA + " " + s.teamAScore + " - " + s.teamBScore + " " + tB; }).join(" | ");
                 } else if (getLatestSubmissions(game.id).length === 1) {
                   var sub = getLatestSubmissions(game.id)[0];
                   scoreText = sub.teamAScore + " - " + sub.teamBScore + " (1/2)";
@@ -3755,19 +3757,24 @@ th {
     }
 
     function updateScoreLabels(game) {
-      const teamAScoreLabel = document.getElementById("teamAScoreLabel");
-      const teamBScoreLabel = document.getElementById("teamBScoreLabel");
+      const myLabel = document.getElementById("myScoreLabel");
+      const oppLabel = document.getElementById("opponentScoreLabel");
 
-      if (!teamAScoreLabel || !teamBScoreLabel) return;
+      if (!myLabel || !oppLabel) return;
 
-      if (!game) {
-        teamAScoreLabel.textContent = "Score for Team A";
-        teamBScoreLabel.textContent = "Score for Team B";
+      const reportingTeam = document.getElementById("reportingTeam")?.value;
+      if (!game || !reportingTeam) {
+        myLabel.textContent = "Your team's score";
+        oppLabel.textContent = "Opponent's score";
         return;
       }
 
-      teamAScoreLabel.textContent = `Game Score for ${resolveTeamName(game.teamA)}`;
-      teamBScoreLabel.textContent = `Game Score for ${resolveTeamName(game.teamB)}`;
+      const resolvedA = resolveTeamName(game.teamA);
+      const resolvedB = resolveTeamName(game.teamB);
+      const opponent = reportingTeam === resolvedA ? resolvedB : resolvedA;
+
+      myLabel.textContent = `Your score (${reportingTeam})`;
+      oppLabel.textContent = `Opponent's score (${opponent})`;
     }
 
     function updateSpiritReceiverText() {
@@ -3820,8 +3827,11 @@ th {
         return;
       }
 
-      const teamAScore = Number(document.getElementById("teamAScore").value);
-      const teamBScore = Number(document.getElementById("teamBScore").value);
+      // Map "my score" / "opponent score" to correct teamA/teamB based on who's reporting
+      const myScore = Number(document.getElementById("myScore").value);
+      const opponentScore = Number(document.getElementById("opponentScore").value);
+      const teamAScore = reportingTeam === resolvedA ? myScore : opponentScore;
+      const teamBScore = reportingTeam === resolvedA ? opponentScore : myScore;
       const submittedBy = document.getElementById("submittedBy").value.trim();
       const teamPin = document.getElementById("teamPin").value.trim();
 
@@ -3846,7 +3856,7 @@ th {
         return;
       }
 
-      if (teamAScore === teamBScore) {
+      if (myScore === opponentScore) {
         message.className = "error";
         message.textContent = "An ultimate game normally cannot end in a draw. Please check the score.";
         return;
