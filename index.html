@@ -3265,8 +3265,21 @@ th {
       return getSubmissions().filter(submission => submission.gameId === gameId);
     }
 
+    // Returns only the latest submission per reporting team for a game
+    function getLatestSubmissions(gameId) {
+      var allSubs = getGameSubmissions(gameId);
+      var latestByTeam = {};
+      allSubs.forEach(function(sub) {
+        var team = sub.reportingTeam;
+        if (!latestByTeam[team] || sub.timestamp > latestByTeam[team].timestamp) {
+          latestByTeam[team] = sub;
+        }
+      });
+      return Object.values(latestByTeam);
+    }
+
     function getConfirmedResult(gameId) {
-      const submissions = getGameSubmissions(gameId);
+      const submissions = getLatestSubmissions(gameId);
       if (submissions.length === 0) return null;
 
       const first = submissions[0];
@@ -3313,8 +3326,8 @@ th {
         return { label: "⚠ Score dispute", className: "mismatch" };
       }
 
-      const subs = getGameSubmissions(game.id);
-      if (subs.length === 1) {
+      var latestSubs = getLatestSubmissions(game.id);
+      if (latestSubs.length === 1) {
         return { label: "1/2 reported", className: "partial" };
       }
 
@@ -3357,10 +3370,10 @@ th {
                 if (result && result.allSameScore) {
                   scoreText = result.teamAScore + " - " + result.teamBScore;
                 } else if (result && !result.allSameScore) {
-                  var subs = getGameSubmissions(game.id);
+                  var subs = getLatestSubmissions(game.id);
                   scoreText = subs.map(function(s) { return s.reportingTeam + ": " + s.teamAScore + "-" + s.teamBScore; }).join(" / ");
-                } else if (getGameSubmissions(game.id).length === 1) {
-                  var sub = getGameSubmissions(game.id)[0];
+                } else if (getLatestSubmissions(game.id).length === 1) {
+                  var sub = getLatestSubmissions(game.id)[0];
                   scoreText = sub.teamAScore + " - " + sub.teamBScore + " (1/2)";
                 }
                 const tA = resolveTeamName(game.teamA);
@@ -3665,12 +3678,12 @@ th {
     // ------------------------------------------------------------
 
     function getReportedTeamsForGame(gameId) {
-      return [...new Set(getGameSubmissions(gameId).map(submission => submission.reportingTeam))];
+      return getLatestSubmissions(gameId).map(submission => submission.reportingTeam);
     }
 
     function getAvailableReportingTeams(game) {
-      const reportedTeams = getReportedTeamsForGame(game.id);
-      return [resolveTeamName(game.teamA), resolveTeamName(game.teamB)].filter(teamName => !reportedTeams.includes(teamName));
+      // Always allow both teams to submit (supports resubmission)
+      return [resolveTeamName(game.teamA), resolveTeamName(game.teamB)];
     }
 
     function renderGameSelect() {
@@ -3678,24 +3691,22 @@ th {
       if (!select) return;
 
       const previousValue = select.value;
-      const openGames = games.filter(game => getAvailableReportingTeams(game).length > 0);
-
-      if (openGames.length === 0) {
-        select.innerHTML = `<option value="">All matches have been reported</option>`;
-        select.disabled = true;
-        updateReportingTeamOptions();
-        return;
-      }
 
       select.disabled = false;
-      select.innerHTML = openGames.map(game => {
-        const status = getGameStatus(game.id);
-        const reportedCount = getReportedTeamsForGame(game.id).length;
-        const reportingText = reportedCount === 0 ? "no reports yet" : `${reportedCount}/2 reported`;
-        return `<option value="${game.id}">${game.id}: ${game.time} · ${resolveTeamName(game.teamA)} vs ${resolveTeamName(game.teamB)} · ${reportingText}</option>`;
+      select.innerHTML = games.map(game => {
+        const latestSubs = getLatestSubmissions(game.id);
+        const reportedCount = latestSubs.length;
+        var statusText = "no reports yet";
+        if (reportedCount === 2) {
+          var result = getConfirmedResult(game.id);
+          statusText = result && result.allSameScore ? "✓ confirmed" : "⚠ score dispute";
+        } else if (reportedCount === 1) {
+          statusText = "1/2 reported";
+        }
+        return `<option value="${game.id}">${game.id}: ${game.time} · ${resolveTeamName(game.teamA)} vs ${resolveTeamName(game.teamB)} · ${statusText}</option>`;
       }).join("");
 
-      if (openGames.some(game => game.id === previousValue)) {
+      if (games.some(game => game.id === previousValue)) {
         select.value = previousValue;
       }
 
