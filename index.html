@@ -2958,7 +2958,7 @@ th {
           <div>
             <label for="reportingTeam">Select your team</label>
             <select id="reportingTeam" required></select>
-            <p class="muted" id="spiritReceiverText">Choose a match first. Teams that have already reported are removed automatically.</p>
+            <p class="muted" id="spiritReceiverText">Choose a match first. You can resubmit — only the latest score is used.</p>
           </div>
 
           <div class="two-col">
@@ -3786,7 +3786,7 @@ th {
       }
 
       if (!reportingTeam) {
-        text.textContent = "Both teams have already reported this match.";
+        text.textContent = "Select your team to report.";
         return;
       }
 
@@ -3817,17 +3817,6 @@ th {
       if (![resolvedA, resolvedB].includes(reportingTeam)) {
         message.className = "error";
         message.textContent = "Please choose one of the two teams in the selected match.";
-        return;
-      }
-
-      const alreadyReported = getSubmissions().some(
-        item => item.gameId === gameId && item.reportingTeam === reportingTeam
-      );
-
-      if (alreadyReported) {
-        message.className = "error";
-        message.textContent = `${reportingTeam} has already reported this match. Ask the tournament organizer if something needs to be corrected.`;
-        renderGameSelect();
         return;
       }
 
