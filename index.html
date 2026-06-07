@@ -3258,7 +3258,7 @@ th {
       const container = document.getElementById("poolsContainer");
       if (!container) return;
 
-      const pools = [...new Set(teams.map(team => team.pool))];
+      const pools = [...new Set(teams.map(team => team.pool))].sort();
       container.innerHTML = `<div class="pool-grid">${pools.map(pool => {
         const poolTeams = teams.filter(team => team.pool === pool).sort((a, b) => a.seed - b.seed);
 
@@ -3600,7 +3600,7 @@ th {
       if (!container) return;
 
       const standings = calculateStandings();
-      const pools = [...new Set(teams.map(team => team.pool))];
+      const pools = [...new Set(teams.map(team => team.pool))].sort();
 
       container.innerHTML = pools.map(pool => {
         const rows = standings
